@@ -1,0 +1,33 @@
+import AppActions from "src/AppActions";
+import { LanguajeService } from "src/languaje/languaje.service";
+import PermitModel from "src/model/permit.model";
+import UserModel from "src/model/user.model";
+import PaymentMethodService from "src/service/master/payment.service";
+import UserService from "src/service/user.service";
+import WalletService from "src/service/wallet.service";
+export default class UserController {
+    private service;
+    private model;
+    private paymentService;
+    private permit;
+    private permitModel;
+    private languaje;
+    private wallet;
+    private lang;
+    constructor(service: UserService, model: UserModel, paymentService: PaymentMethodService, permit: AppActions, permitModel: PermitModel, languaje: LanguajeService, wallet: WalletService);
+    private paginate;
+    private createFinance;
+    private udpateStatusFinance;
+    private financePaginate;
+    private findWallet;
+    private createPayment;
+    private paymentAll;
+    private paymentMy;
+    private unique;
+    private create;
+    private update;
+    private delete;
+    private getActionsList;
+    private getActionsUnique;
+    private getPermit;
+}

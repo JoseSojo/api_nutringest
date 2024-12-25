@@ -1,0 +1,874 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String              @id                 @default(uuid())
+
+  email                   String
+  username                String
+  password                String
+
+  ci                      String?
+  name2                   String?
+  lastname2               String?
+  nacionality             String?
+
+  email2                   String?
+  phone                    String?
+  phone2                   String?
+
+  propietaryCode          String        @default("")
+  code                    String?               
+
+  age                     Int?
+  genero                  String?
+
+  name                    String?
+  lastname                String?
+
+  passwordRequetsAt       DateTime?
+  passwordRequetsToken    String?
+
+  token                   String?
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+
+
+  // # CITAS INICIO ()
+
+  nutricionist            Quote[]           @relation("nutricionist")
+  patient                 Quote[]           @relation("patient")
+
+  // # CITAS FIN
+
+  // parent
+  parentId                String?
+  parentReference         User?               @relation("parent", fields: [parentId], references: [id])
+
+  childs                  User[]              @relation("parent")
+
+  // relation user unique
+  rolId                   String?
+  rolReference            Permits?            @relation("userRef", fields: [rolId], references: [id])
+
+  languajeId              String?
+  languajeReference       ConfigLanguaje?     @relation("userRef", fields: [languajeId], references: [id])
+
+  cityId                  String?
+  cityReference           ConfigCity?         @relation("address", fields: [cityId], references: [id])
+
+  subscriptionReference   SubscriptionInUser[]
+  paymentUser             PaymetInUser[]
+  finance                 PaymentFinance[]
+
+  subscriptionSecondTask  TaskSeondPlanSubscription[]
+
+  // WALLET
+  wallet                  Wallet?
+
+  // MANY TO MANY
+
+  // relations (user is MANY)
+  exchangeList            ExchangeList[]
+  coupons                 Coupons[]
+  permissions             Permits[]           @relation("create")       // reference to permissions create for user
+  sessions                Session[]           // reference to many sessions
+  countrys                ConfigCountry[]
+  states                  ConfigState[]
+  citys                   ConfigCity[]        @relation("create")
+  languaje                ConfigLanguaje[]    @relation("create")
+  coins                   Coin[]
+  paymentMethod           PaymentMethod[]
+  subscription            Subscription[]        @relation("create")
+  subscriptionDetail      SubscriptionDetail[]  @relation("create")
+
+  byNotifications         Notification[]        @relation("userBy")
+  forNotifications        Notification[]        @relation("userFor")
+
+  supplements             Supplement[]          @relation("create")
+  unityMeasure            UnityMeasure[]        @relation("create")
+  Presentation            Presentation[]        @relation("create")
+  menus                   Menu[]                @relation("create")
+  photoQuote              HistoryPhoto[]        @relation("create")
+  calendar                Calendar[]            @relation("create")
+  calendarHistory         CalendarHistoryStatus[]            @relation("create")
+  history                 History[]            @relation("create")
+}
+
+// REFEWARS
+
+model Coupons {
+  id                      String              @id           @default(uuid())
+
+  mount                   Decimal
+
+  propietaryId            String
+  propietaryReference     User                @relation(fields: [propietaryId], references: [id])
+
+  description             String
+
+  use                     Boolean             @default(false)
+  
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+// END REFEWARS
+
+// SUBSCRIPTIONS START
+
+model Subscription {
+  id                      String            @id                   @default(uuid())
+  name                    String?
+
+  countMonth              Int               @default(1)
+  defaultMount            Float             @default(49.99)  // defaul for month
+
+  details                 SubscriptionDetail[]
+  
+  createById              String?
+  createByReference       User?             @relation("create", fields: [createById], references: [id])
+
+  users                   SubscriptionInUser[]
+
+  isDelete                        Boolean           @default(false)
+  createAt                        DateTime          @default(now())
+  updateAt                        DateTime          @default(now())       @updatedAt
+}
+
+model SubscriptionInUser {
+  id                              String            @id                   @default(uuid())
+
+  active                          Boolean
+  status                          String            // FREE_TRIAL   |    ACTIVE     | DISACTIVE
+
+  dayStart                        Int
+  monthStart                      Int
+  yearStart                       Int
+
+  dayEnd                          Int
+  monthEnd                        Int
+  yearEnd                         Int
+
+  subscriptionId                  String
+  subscriptionReference           Subscription      @relation(fields: [subscriptionId], references: [id])
+
+  userById                        String?
+  userByReference                 User?               @relation(fields: [userById], references: [id])
+
+  isDelete                        Boolean           @default(false)
+  createAt                        DateTime          @default(now())
+  updateAt                        DateTime          @default(now())       @updatedAt
+}
+
+model TaskSeondPlanSubscription {
+  id                          String              @id                 @default(uuid())
+
+  userId                      String
+  userReference               User                @relation(fields: [userId], references: [id])
+
+  task                        String
+
+  completed                   Boolean             @default(false)
+  
+  extra                       Json
+
+  isDelete                        Boolean           @default(false)
+  createAt                        DateTime          @default(now())
+  updateAt                        DateTime          @default(now())       @updatedAt
+}
+
+// DATA PAYMENT FOR SUBSCRIPTION
+
+model Wallet {
+  id                    String              @id               @default(uuid())
+
+  mount                 Decimal
+
+  userId                String              @unique
+  userReference         User                @relation(fields: [userId], references: [id])
+}
+
+// Talonario de pagos
+model SubscriptionDetail {
+  id                              String            @id                   @default(uuid())
+
+  name                            String
+  mount                           Decimal
+
+  paymentMethodId                 String
+  paymentMethodReference          PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
+
+  dayStart                        Int
+  monthStart                      Int
+  yearStart                       Int
+
+  dayEnd                          Int
+  monthEnd                        Int
+  yearEnd                         Int
+
+  subscriptionId                  String
+  subscriptionReference           Subscription      @relation(fields: [subscriptionId], references: [id])
+
+  createById              String?
+  createByReference       User?                     @relation("create", fields: [createById], references: [id])
+
+  isDelete                        Boolean           @default(false)
+  createAt                        DateTime          @default(now())
+  updateAt                        DateTime          @default(now())       @updatedAt
+}
+
+model PaymetInUser {
+  id                  String          @id             @default(uuid())
+
+  description         String
+  
+  userId              String
+  userReference       User            @relation(fields: [userId], references: [id])
+
+  paymenthId          String 
+  paymentReference    PaymentMethod   @relation(fields: [paymenthId], references: [id])
+
+  finance             PaymentFinance[]
+
+  isDelete                  Boolean             @default(false)
+  createAt                  DateTime            @default(now())
+  updateAt                  DateTime?           @updatedAt()      @default(now())
+}
+
+model PaymentFinance {
+  id                  String            @id           @default(uuid())
+
+  status              String            @default("EN ESPERA")
+  date                String?
+
+  mount               Int
+
+  userId              String
+  userReference       User              @relation(fields: [userId], references: [id])
+
+  paymentId           String
+  paymentInUser       PaymetInUser      @relation(fields: [paymentId], references: [id])
+
+  createAt            DateTime          @default(now())
+}
+
+// SUBSCRIPTIONS END
+
+
+// CALENDAR START
+
+model Calendar {
+  id                        String              @id             @default(uuid())
+
+  status                    String              // ACTIVO | VENCIDA | CULMINADA | CANCELADA
+
+  hours                     String?
+
+  day                       Int
+  monthName                 String
+  monthNumber               Int
+  year                      Int
+
+  description               String
+
+  quoteId                   String?
+  quoteReference            Quote?              @relation(fields: [quoteId], references: [id])
+
+  createById                String
+  createByReference         User                @relation("create", fields: [createById], references: [id])
+
+  isDelete                  Boolean             @default(false)
+  createAt                  DateTime            @default(now())
+  updateAt                  DateTime?           @updatedAt()      @default(now())
+}
+
+model CalendarHistoryStatus {
+  id                        String              @id             @default(uuid())
+
+  status                     String              // ACTIVO | VENCIDA | CULMINADA | CANCELADA
+  description               String
+
+  createById                String
+  createByReference         User                @relation("create", fields: [createById], references: [id])
+
+
+  isDelete                  Boolean             @default(false)
+  createAt                  DateTime            @default(now())
+  updateAt                  DateTime?           @updatedAt()      @default(now())
+}
+
+// CALENDAR END
+
+// QUOTE START
+model Quote {
+  id                String              @id                 @default(uuid())
+
+  weightNow         Decimal?      // actual
+  weightPreview     Decimal?      // anterior
+  weightObjective   Decimal?      // objetivo
+
+  nutricionistId                String
+  nutricionistReference         User              @relation("nutricionist", fields: [nutricionistId], references: [id])
+
+  patientId                     String
+  patientReference              User              @relation("patient", fields: [patientId], references: [id])
+
+  history                       HistoryQuote[]
+  exchange                      ExchangeListInQuote[]
+  photos                        HistoryPhoto[]
+  calendar                      Calendar[]
+
+  //  HABITOS
+  exercise                String?
+  sleep                   String?
+
+  //  Dietary  
+
+  // Description
+  description             String?
+
+  // MENU
+  menus         MenuInQuote[]
+
+  // DIETARIO
+  proteinas         Decimal?
+  lipidos           Decimal?
+  Carbohidratos     Decimal?
+
+  // FOODS
+  foodAllQuote            FoodAll[]
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model HistoryPhoto {
+  id                    String            @id         @default(uuid())
+
+  size                  Decimal
+
+  date                  String?
+  description           String?
+
+  originalName          String
+  path                  String
+  donwload              String             @default("")
+  mimyType              String
+
+  // MANY RELATIONS
+  quoteId               String
+  quoteReference        Quote              @relation(fields: [quoteId], references: [id])  
+
+  createById            String
+  createByRef           User              @relation("create", fields: [createById], references: [id])
+
+  isDelete              String?
+  updateAt              DateTime          @default(now())     @updatedAt()
+  createAt              DateTime          @default(now())
+
+
+}
+
+model FoodAll {
+  id                  String              @id                 @default(uuid())
+  
+  type                String
+
+  quoteId             String
+  quoteReference      Quote               @relation(fields: [quoteId], references: [id])
+
+  foodId              String
+  foodReference       PrimitiveFood       @relation(fields: [foodId], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+
+}
+
+model Dietary {
+  id                String              @id                 @default(uuid())
+
+  proteinas         Decimal
+  lipidos           Decimal
+  Carbohidratos     Decimal
+}
+
+model HistoryQuote {
+  id                String              @id                 @default(uuid())
+
+  description       String?
+
+  quoteId           String
+  quoteReference    Quote               @relation(fields: [quoteId], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model ExchangeListInQuote {
+  id              String            @id               @default(uuid())
+
+  quoteId         String
+  quoteReference  Quote             @relation(fields: [quoteId], references: [id])
+
+  exchangeId          String
+  exchangeReference   ExchangeList              @relation(fields: [exchangeId], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model ExchangeList {
+  id                  String            @id             @default(uuid())
+
+  name                String
+  ration              String?
+
+  unityId             String?
+  unityReference      UnityMeasure?     @relation(fields: [unityId], references: [id])
+
+  foods               ExchangeListFoods[]
+  exchange            ExchangeListInQuote[]
+
+  userId              String
+  userReference       User                  @relation(fields: [userId], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model ExchangeListFoods {
+  id                          String            @id             @default(uuid())
+
+  ration                      String?
+  unityMeasureId              String?
+  unityMeasureReference       UnityMeasure?             @relation(fields: [unityMeasureId], references: [id])
+
+  exchangeListId              String
+  exchangeListReference       ExchangeList               @relation(fields: [exchangeListId], references: [id])
+
+  foodId                      String
+  foodReference               PrimitiveFood       @relation(fields: [foodId], references: [id])
+  
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model MenuInQuote {
+  id              String            @id               @default(uuid())
+
+  quoteId         String
+  quoteReference  Quote             @relation(fields: [quoteId], references: [id])
+
+  menuId          String
+  menuReference   Menu              @relation(fields: [menuId], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model Menu {
+  id              String            @id             @default(uuid())
+
+  name            String?
+  description     String?
+
+  type            String
+  details         MenuInQuote[]
+
+  foods           MenuDetail[]
+
+  createById              String?
+  createByReference       User?                @relation("create", fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model MenuDetail {
+  id              String            @id             @default(uuid())
+
+  menuId          String
+  menuReference   Menu              @relation(fields: [menuId], references: [id])
+
+  foodPrimitiveId           String 
+  foodPrimitiveReference    PrimitiveFood             @relation(fields: [foodPrimitiveId], references: [id])
+
+  quentity                  Int?
+
+  unityMeasureId            String?
+  unityMeasureReference     UnityMeasure?              @relation(fields: [unityMeasureId], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+// QUOTE END
+
+model Session {
+  id              String              @id
+  
+  token           String
+
+  userId          String
+  userReference   User                @relation(fields: [userId], references: [id])         // reference to unique user
+
+  startDate       DateTime            @default(now())
+  endDate         DateTime            @default(now())   @updatedAt
+
+  isDelte         Boolean             @default(false)
+  updateAt        DateTime            @updatedAt()      @default(now())
+  createAt        DateTime            @default(now())
+}
+
+// maestros
+
+model ConfigLanguaje {
+  id                String            @id                 @default(uuid())
+  payload           String
+  label             String
+
+  users             User[]            @relation("userRef")
+
+  createById              String?
+  createByReference       User?               @relation("create", fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model Permits {
+  id                      String              @id                 @default(uuid())
+  name                    String              @unique
+  roles                   Json
+
+  users                   User[]              @relation("userRef")
+
+  createById              String?
+  createByReference       User?               @relation("create", fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model PaymentMethod {
+  id                      String                @id                 @default(uuid())
+
+  name                    String
+  description             String
+
+  required                Json?  
+
+  moneyId                 String
+  moneyReference          Coin                @relation(fields: [moneyId], references: [id])
+
+  createById              String
+  createByReference       User                @relation(fields: [createById], references: [id])  
+
+  paymentsSubcription     SubscriptionDetail[]
+  paymentsUser            PaymetInUser[]
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model Coin {
+  id                      String                @id                 @default(uuid())
+
+  prefix                  String
+  name                    String
+  description             String
+
+  country                 ConfigCountry?
+  paymentMethods          PaymentMethod[]
+
+  createById              String
+  createByReference       User                @relation(fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime?           @updatedAt()      @default(now())
+}
+
+model ConfigCountry {
+  id                      String              @id                 @default(uuid())
+
+  coinId                  String              @unique
+  coinReference           Coin                @relation(fields: [coinId], references: [id])
+  prefixPhone             String
+
+  name                    String
+
+  states                  ConfigState[]
+
+  createById              String
+  createByReference       User                @relation(fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model ConfigState {
+  id                      String              @id                 @default(uuid())
+
+  name                    String
+  countryId               String
+  countryReference        ConfigCountry       @relation(fields: [countryId], references: [id])
+
+  citys                   ConfigCity[]
+
+  createById              String
+  createByReference       User                @relation(fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model ConfigCity {
+  id                      String              @id                 @default(uuid())
+
+  name                    String
+  stateId                 String
+  stateReference          ConfigState       @relation(fields: [stateId], references: [id])
+
+  createById              String
+  createByReference       User                @relation("create", fields: [createById], references: [id])
+
+  users                   User[]              @relation("address")
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+//
+model Notification {
+  id                      String              @id                 @default(uuid())
+
+  content                 String
+
+  generateBy              String              @default("app")
+
+  userById                String?
+  userByReference         User?               @relation("userBy", fields: [userById], references: [id])
+
+  userForId               String?
+  userForReference        User?               @relation("userFor", fields: [userForId], references: [id])
+
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @default(now())           @updatedAt
+  isDelete                Boolean            @default(false)
+}
+
+// alimentos
+model PrimitiveFood {
+  id              String            @id             @default(uuid())
+
+  code            Int               @unique               @default(autoincrement())
+  name            String
+  quantity        Decimal                 @default(0)
+  calorias        Decimal                 @default(0)
+  humed           Decimal                 @default(0)
+  proteina        Decimal                 @default(0)
+  fosforo         Decimal                 @default(0)
+  potasio         Decimal                 @default(0)
+  grasas          Decimal                 @default(0)
+  carbohidratosDisponibles                Decimal                   @default(0)
+  carbohidratosTotales                    Decimal                   @default(0)
+  fibraTotal      Decimal                 @default(0)
+  fibraInsolub    Decimal                 @default(0)
+  cenizas         Decimal                 @default(0)
+  calcio          Decimal                 @default(0)
+  hierro          Decimal                 @default(0)
+  magnesio        Decimal                 @default(0)
+  zinc            Decimal                 @default(0)
+  cobre           Decimal                 @default(0)
+  sodio           Decimal                 @default(0)
+  vitaminaA       Decimal                 @default(0)
+  carotenoEquivTotal                      Decimal               @default(0)
+  tiamina         Decimal                 @default(0)
+  riboflavina     Decimal                 @default(0)
+  niacina         Decimal                 @default(0)
+  vitaminaB6      Decimal                 @default(0)
+  acidAscorb      Decimal                   @default(0)
+
+  // FOODS
+  foodAll                 FoodAll[]
+  exchangeList            ExchangeListFoods[]
+  menuDetail              MenuDetail[]
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model UnityMeasure {
+  id              String            @id          @default(uuid())
+  name            String
+  abr             String            @unique
+
+  createById              String
+  createByReference       User                @relation("create", fields: [createById], references: [id])
+
+  exchangeListFood        ExchangeListFoods[]
+  menuDetail              MenuDetail[]
+  exchangeList            ExchangeList[]
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model Presentation {
+  id              String            @id          @default(uuid())
+  
+  name            String
+
+  supplementId            String
+  SupplementReference     Supplement          @relation(fields: [supplementId], references: [id])
+
+  createById              String
+  createByReference       User                @relation("create", fields: [createById], references: [id])
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model Supplement {
+  id              String            @id          @default(uuid())
+  
+  name            String
+  description     String
+
+  createById              String
+  createByReference       User                @relation("create", fields: [createById], references: [id])
+
+  presentaciones          Presentation[]
+
+  isDelete                Boolean             @default(false)
+  createAt                DateTime            @default(now())
+  updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+// history and statictics for month and year
+
+model History {
+  id                      String              @id                 @default(uuid())
+
+  eventName               String?
+
+  userId                  String
+  userReference           User                @relation("create", fields: [userId], references: [id])
+
+  objectName              String?
+  objectReferenceId       String?
+
+  createAt                DateTime            @default(now())
+}
+
+model StaticticsForMonth {
+  id                      String              @id                 @default(uuid())
+
+  objectName              String?             // objeto
+  objectReferenceId       String              @default("application")             // is id => model throw is global
+
+  year                    Int
+
+  monthName               String
+  monthNumber             Int     
+
+  totalMonth              Int                 @default(0)
+
+  totalDay1               Int                 @default(0)
+  totalDay2               Int                 @default(0)
+  totalDay3               Int                 @default(0)
+  totalDay4               Int                 @default(0)
+  totalDay5               Int                 @default(0)
+  totalDay6               Int                 @default(0)
+  totalDay7               Int                 @default(0)
+  totalDay8               Int                 @default(0)
+  totalDay9               Int                 @default(0)
+  totalDay10              Int                 @default(0)
+  totalDay11              Int                 @default(0)
+  totalDay12              Int                 @default(0)
+  totalDay13              Int                 @default(0)
+  totalDay14              Int                 @default(0)
+  totalDay15              Int                 @default(0)
+  totalDay16              Int                 @default(0)
+  totalDay17              Int                 @default(0)
+  totalDay18              Int                 @default(0)
+  totalDay19              Int                 @default(0)
+  totalDay20              Int                 @default(0)
+  totalDay21              Int                 @default(0)
+  totalDay22              Int                 @default(0)
+  totalDay23              Int                 @default(0)
+  totalDay24              Int                 @default(0)
+  totalDay25              Int                 @default(0)
+  totalDay26              Int                 @default(0)
+  totalDay27              Int                 @default(0)
+  totalDay28              Int                 @default(0)
+  totalDay29              Int                 @default(0)
+  totalDay30              Int                 @default(0)
+  totalDay31              Int                 @default(0)
+
+  updateAt                DateTime            @default(now())         @updatedAt
+  createAt                DateTime            @default(now())
+}
+
+model StaticticsForYear {
+  id                      String              @id                 @default(uuid())
+
+  objectName              String?             // ob
+  objectReferenceId       String              @default("application")             // is id => model throw is global
+
+  year                    Int  
+
+  totalYear              Int                  @default(0)
+
+  totalMonth1            Int                  @default(0)
+  totalMonth2            Int                  @default(0)
+  totalMonth3            Int                  @default(0)
+  totalMonth4            Int                  @default(0)
+  totalMonth5            Int                  @default(0)
+  totalMonth6            Int                  @default(0)
+  totalMonth7            Int                  @default(0)
+  totalMonth8            Int                  @default(0)
+  totalMonth9            Int                  @default(0)
+  totalMonth10           Int                  @default(0)
+  totalMonth11           Int                  @default(0)
+  totalMonth12           Int                  @default(0)
+  
+  updateAt                DateTime            @default(now())         @updatedAt
+  createAt                DateTime            @default(now())
+}
+

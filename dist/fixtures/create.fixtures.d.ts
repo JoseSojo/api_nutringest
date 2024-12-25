@@ -1,0 +1,31 @@
+import AppActions from "src/AppActions";
+import ConfigCityModel from "src/model/master/city.model";
+import ConfigCountryModel from "src/model/master/country.model";
+import ConfigMoneyModel from "src/model/master/money.model";
+import PaymentMethodModel from "src/model/master/payment.model";
+import ConfigStateModel from "src/model/master/state.model";
+import ConfigSubscriptionModel from "src/model/master/subsccription.model";
+import UnityMeasureModel from "src/model/nutri/unity.model";
+import PermitModel from "src/model/permit.model";
+import UserModel from "src/model/user.model";
+import UserService from "src/service/user.service";
+export default class FixtureCreate {
+    private permitModel;
+    private userModel;
+    private countryModel;
+    private stateModel;
+    private cityModel;
+    private moneyModel;
+    private paymentModel;
+    private subscriptionModel;
+    private unityModel;
+    private userService;
+    private permit;
+    constructor(permitModel: PermitModel, userModel: UserModel, countryModel: ConfigCountryModel, stateModel: ConfigStateModel, cityModel: ConfigCityModel, moneyModel: ConfigMoneyModel, paymentModel: PaymentMethodModel, subscriptionModel: ConfigSubscriptionModel, unityModel: UnityMeasureModel, userService: UserService, permit: AppActions);
+    permitFix(): Promise<string[]>;
+    userFix(): Promise<string[]>;
+    regionalFix(): Promise<void>;
+    paymentFix(): Promise<{}>;
+    unityFix(): Promise<{}>;
+    subscriptionFix(): Promise<{}>;
+}

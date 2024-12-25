@@ -1,0 +1,135 @@
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export default class AppEvent {
+
+    // SECOND TASK
+    public readonly CHANGE_SUSBCTION = `CHANGE_SUSBCTION`;
+
+
+    // REGISTER HISTORY
+    public readonly EVENT_QUOTE_CREATE = `Cita creada.`;  
+    public readonly EVENT_QUOTE_UPDATE = `Cita actualizada.`;  
+    public readonly EVENT_ADD_PHOTO_UPDATE = `Foto agregada a la cita.`;  
+    public readonly EVENT_ASSING_MENU_UPDATE = `Menú asignado a la cita.`;  
+    public readonly EVENT_REMOVE_MENU_UPDATE = `Menú removido de la cita.`;  
+    public readonly EVENT_ASSING_FOOD_UPDATE = `Alimento asignado a la cita.`;  
+    public readonly EVENT_REMOVE_FOOD_UPDATE = `Alimento removido de la cita.`;  
+    public readonly EVENT_ASSING_EXCHANGE_LIST_UPDATE = `Lista de intercambio agregada a la cita.`;  
+    public readonly EVENT_REMOVE_EXCHANGE_LIST_UPDATE = `Lista de intercambio removida de la cita.`;  
+    public readonly EVENT_QUOTE_DELETE = `Cita eliminada`;  
+    public readonly EVENT_QUOTE_RECOVERY = `Cita recuperada`;  
+    public readonly EVENT_QUOTE_PHOTO_UPLOAD = `Foto cargada a la cita.`;  
+
+    public readonly EVENT_CATEGORY_CREATE = `EVENT_CATEGORY_CREATE`;  
+    public readonly EVENT_CATEGORY_UPDATE = `EVENT_CATEGORY_UPDATE`;  
+    public readonly EVENT_CATEGORY_DELETE = `EVENT_CATEGORY_DELETE`;  
+    public readonly EVENT_CATEGORY_RECOVERY = `EVENT_CATEGORY_RECOVERY`;  
+
+    public readonly EVENT_PROGRAM_CREATE = `EVENT_PROGRAM_CREATE`;  
+    public readonly EVENT_PROGRAM_UPDATE = `EVENT_PROGRAM_UPDATE`;  
+    public readonly EVENT_PROGRAM_DELETE = `EVENT_PROGRAM_DELETE`;  
+    public readonly EVENT_PROGRAM_RECOVERY = `EVENT_PROGRAM_RECOVERY`;  
+
+    public readonly EVENT_LINE_CREATE = `EVENT_LINE_CREATE`;  
+    public readonly EVENT_LINE_UPDATE = `EVENT_LINE_UPDATE`;  
+    public readonly EVENT_LINE_DELETE = `EVENT_LINE_DELETE`;  
+    public readonly EVENT_LINE_RECOVERY = `EVENT_LINE_RECOVERY`;  
+
+    public readonly EVENT_USER_CREATE = `EVENT_USER_CREATE`;  
+    public readonly EVENT_USER_UPDATE = `EVENT_USER_UPDATE`;  
+    public readonly EVENT_USER_DELETE = `EVENT_USER_DELETE`;  
+    public readonly EVENT_USER_RECOVERY = `EVENT_USER_RECOVERY`;  
+
+    public readonly EVENT_PROJECT_CREATE        = `EVENT_PROJECT_CREATE`;  
+    public readonly EVENT_PROJECT_UPDATE        = `EVENT_PROJECT_UPDATE`;  
+    public readonly EVENT_PROJECT_SET_PUBLIC    = `EVENT_PROJECT_SET_PUBLIC`;
+    public readonly EVENT_PROJECT_SET_DOWNLOAD  = `EVENT_PROJECT_SET_DOWNLOAD`;
+    public readonly EVENT_PROJECT_DELETE        = `EVENT_PROJECT_DELETE`;  
+    public readonly EVENT_PROJECT_RECOVERY      = `EVENT_PROJECT_RECOVERY`;  
+
+    public readonly EVENT_CONFIG_CITY_CREATE        = `EVENT_CONFIG_CITY_CREATE`;  
+    public readonly EVENT_CONFIG_CITY_UPDATE        = `EVENT_CONFIG_CITY_UPDATE`;  
+    public readonly EVENT_CONFIG_CITY_DELETE        = `EVENT_CONFIG_CITY_DELETE`;  
+    public readonly EVENT_CONFIG_CITY_RECOVERY      = `EVENT_CONFIG_CITY_RECOVERY`; 
+    
+    public readonly EVENT_CONFIG_STATE_CREATE        = `EVENT_CONFIG_STATE_CREATE`;  
+    public readonly EVENT_CONFIG_STATE_UPDATE        = `EVENT_CONFIG_STATE_UPDATE`;  
+    public readonly EVENT_CONFIG_STATE_DELETE        = `EVENT_CONFIG_STATE_DELETE`;  
+    public readonly EVENT_CONFIG_STATE_RECOVERY      = `EVENT_CONFIG_STATE_RECOVERY`; 
+
+    public readonly EVENT_CONFIG_COUNTRY_CREATE        = `EVENT_CONFIG_COUNTRY_CREATE`;  
+    public readonly EVENT_CONFIG_COUNTRY_UPDATE        = `EVENT_CONFIG_COUNTRY_UPDATE`;  
+    public readonly EVENT_CONFIG_COUNTRY_DELETE        = `EVENT_CONFIG_COUNTRY_DELETE`;  
+    public readonly EVENT_CONFIG_COUNTRY_RECOVERY      = `EVENT_CONFIG_COUNTRY_RECOVERY`; 
+
+    public readonly EVENT_CONFIG_PAYMENT_METHOD_CREATE        = `EVENT_CONFIG_PAYMENT_METHOD_CREATE`;  
+    public readonly EVENT_CONFIG_PAYMENT_METHOD_UPDATE        = `EVENT_CONFIG_PAYMENT_METHOD_UPDATE`;  
+    public readonly EVENT_CONFIG_PAYMENT_METHOD_DELETE        = `EVENT_CONFIG_PAYMENT_METHOD_DELETE`;  
+    public readonly EVENT_CONFIG_PAYMENT_METHOD_RECOVERY      = `EVENT_CONFIG_PAYMENT_METHOD_RECOVERY`;
+    
+    public readonly EVENT_CONFIG_MONEY_CREATE        = `EVENT_CONFIG_MONEY_CREATE`;  
+    public readonly EVENT_CONFIG_MONEY_UPDATE        = `EVENT_CONFIG_MONEY_UPDATE`;  
+    public readonly EVENT_CONFIG_MONEY_DELETE        = `EVENT_CONFIG_MONEY_DELETE`;  
+    public readonly EVENT_CONFIG_MONEY_RECOVERY      = `EVENT_CONFIG_MONEY_RECOVERY`;
+
+    public readonly EVENT_CONFIG_SUBSCRIPTION_CREATE        = `EVENT_CONFIG_SUBSCRIPTION_CREATE`;  
+    public readonly EVENT_CONFIG_SUBSCRIPTION_UPDATE        = `EVENT_CONFIG_SUBSCRIPTION_UPDATE`;  
+    public readonly EVENT_CONFIG_SUBSCRIPTION_DELETE        = `EVENT_CONFIG_SUBSCRIPTION_DELETE`;  
+    public readonly EVENT_CONFIG_SUBSCRIPTION_RECOVERY      = `EVENT_CONFIG_SUBSCRIPTION_RECOVERY`;
+    
+    public readonly EVENT_NUTRI_PRIMITIVE_FOOD_CREATE        = `EVENT_NUTRI_PRIMITIVE_FOOD_CREATE`;  
+    public readonly EVENT_NUTRI_PRIMITIVE_FOOD_UPDATE        = `EVENT_NUTRI_PRIMITIVE_FOOD_UPDATE`;  
+    public readonly EVENT_NUTRI_PRIMITIVE_FOOD_DELETE        = `EVENT_NUTRI_PRIMITIVE_FOOD_DELETE`;  
+    public readonly EVENT_NUTRI_PRIMITIVE_FOOD_RECOVERY      = `EVENT_NUTRI_PRIMITIVE_FOOD_RECOVERY`;
+
+    public readonly EVENT_NUTRI_PRESENTATION_CREATE        = `EVENT_NUTRI_PRESENTATION_CREATE`;  
+    public readonly EVENT_NUTRI_PRESENTATION_UPDATE        = `EVENT_NUTRI_PRESENTATION_UPDATE`;  
+    public readonly EVENT_NUTRI_PRESENTATION_DELETE        = `EVENT_NUTRI_PRESENTATION_DELETE`;  
+    public readonly EVENT_NUTRI_PRESENTATION_RECOVERY      = `EVENT_NUTRI_PRESENTATION_RECOVERY`;
+
+    public readonly EVENT_NUTRI_SUPPLEMENT_CREATE        = `EVENT_NUTRI_SUPPLEMENT_CREATE`;  
+    public readonly EVENT_NUTRI_SUPPLEMENT_UPDATE        = `EVENT_NUTRI_SUPPLEMENT_UPDATE`;  
+    public readonly EVENT_NUTRI_SUPPLEMENT_DELETE        = `EVENT_NUTRI_SUPPLEMENT_DELETE`;  
+    public readonly EVENT_NUTRI_SUPPLEMENT_RECOVERY      = `EVENT_NUTRI_SUPPLEMENT_RECOVERY`;
+
+    public readonly EVENT_NUTRI_UNITY_CREATE        = `EVENT_NUTRI_UNITY_CREATE`;  
+    public readonly EVENT_NUTRI_UNITY_UPDATE        = `EVENT_NUTRI_UNITY_UPDATE`;  
+    public readonly EVENT_NUTRI_UNITY_DELETE        = `EVENT_NUTRI_UNITY_DELETE`;  
+    public readonly EVENT_NUTRI_UNITY_RECOVERY      = `EVENT_NUTRI_UNITY_RECOVERY`;
+
+    public readonly EVENT_QUOTE_EXCHANGE_LIST_CREATE        = `EVENT_QUOTE_EXCHANGE_LIST_CREATE`;  
+    public readonly EVENT_QUOTE_EXCHANGE_LIST_UPDATE        = `EVENT_QUOTE_EXCHANGE_LIST_UPDATE`;  
+    public readonly EVENT_QUOTE_EXCHANGE_LIST_DELETE        = `EVENT_QUOTE_EXCHANGE_LIST_DELETE`;  
+    public readonly EVENT_QUOTE_EXCHANGE_LIST_RECOVERY      = `EVENT_QUOTE_EXCHANGE_LIST_RECOVERY`;
+
+    public readonly EVENT_QUOTE_MENU_CREATE        = `EVENT_QUOTE_MENU_CREATE`;  
+    public readonly EVENT_QUOTE_MENU_UPDATE        = `EVENT_QUOTE_MENU_UPDATE`;  
+    public readonly EVENT_QUOTE_MENU_DELETE        = `EVENT_QUOTE_MENU_DELETE`;  
+    public readonly EVENT_QUOTE_MENU_RECOVERY      = `EVENT_QUOTE_MENU_RECOVERY`;
+
+    public readonly EVENT_QUOTE_FOOD_CREATE        = `EVENT_QUOTE_FOOD_CREATE`;  
+    public readonly EVENT_QUOTE_FOOD_UPDATE        = `EVENT_QUOTE_FOOD_UPDATE`;  
+    public readonly EVENT_QUOTE_FOOD_DELETE        = `EVENT_QUOTE_FOOD_DELETE`;  
+    public readonly EVENT_QUOTE_FOOD_RECOVERY      = `EVENT_QUOTE_FOOD_RECOVERY`;
+
+    public readonly EVENT_QUOTE_PHOTO_CREATE        = `EVENT_QUOTE_PHOTO_CREATE`;  
+    public readonly EVENT_QUOTE_PHOTO_UPDATE        = `EVENT_QUOTE_PHOTO_UPDATE`;  
+    public readonly EVENT_QUOTE_PHOTO_DELETE        = `EVENT_QUOTE_PHOTO_DELETE`;  
+    public readonly EVENT_QUOTE_PHOTO_RECOVERY      = `EVENT_QUOTE_PHOTO_RECOVERY`;
+
+    public readonly EVENT_QUOTE_PATIENT_CREATE        = `EVENT_QUOTE_PATIENT_CREATE`;  
+    public readonly EVENT_QUOTE_PATIENT_UPDATE        = `EVENT_QUOTE_PATIENT_UPDATE`;  
+    public readonly EVENT_QUOTE_PATIENT_DELETE        = `EVENT_QUOTE_PATIENT_DELETE`;  
+    public readonly EVENT_QUOTE_PATIENT_RECOVERY      = `EVENT_QUOTE_PATIENT_RECOVERY`;
+
+    public readonly EVENT_QUOTE_NUTRICIONIST_CREATE        = `EVENT_QUOTE_NUTRICIONIST_CREATE`;  
+    public readonly EVENT_QUOTE_NUTRICIONIST_UPDATE        = `EVENT_QUOTE_NUTRICIONIST_UPDATE`;  
+    public readonly EVENT_QUOTE_NUTRICIONIST_DELETE        = `EVENT_QUOTE_NUTRICIONIST_DELETE`;  
+    public readonly EVENT_QUOTE_NUTRICIONIST_RECOVERY      = `EVENT_QUOTE_NUTRICIONIST_RECOVERY`;
+
+    public readonly EVENT_CALENDAR_CREATE        = `EVENT_CALENDAR_CREATE`;  
+    public readonly EVENT_CALENDAR_UPDATE        = `EVENT_CALENDAR_UPDATE`;  
+    public readonly EVENT_CALENDAR_DELETE        = `EVENT_CALENDAR_DELETE`;  
+    public readonly EVENT_CALENDAR_RECOVERY      = `EVENT_CALENDAR_RECOVERY`;
+}

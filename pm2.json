@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "nutrigest",
+            "script": "npm",
+            "args": "start:prod"
+        }
+    ]
+}

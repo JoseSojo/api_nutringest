@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `PaymentFinance` ADD COLUMN `status` VARCHAR(191) NOT NULL DEFAULT 'EN ESPERA';

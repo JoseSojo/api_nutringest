@@ -63,6 +63,7 @@ export default class ConfigSubscriptionModel {
             createAt: Date;
             updateAt: Date;
             mount: Prisma.Decimal;
+            paymentMethodId: string;
             dayStart: number;
             monthStart: number;
             yearStart: number;
@@ -70,7 +71,6 @@ export default class ConfigSubscriptionModel {
             monthEnd: number;
             yearEnd: number;
             subscriptionId: string;
-            paymentMethodId: string;
         }[];
     } & {
         id: string;
@@ -128,6 +128,7 @@ export default class ConfigSubscriptionModel {
             createAt: Date;
             updateAt: Date;
             mount: Prisma.Decimal;
+            paymentMethodId: string;
             dayStart: number;
             monthStart: number;
             yearStart: number;
@@ -135,7 +136,6 @@ export default class ConfigSubscriptionModel {
             monthEnd: number;
             yearEnd: number;
             subscriptionId: string;
-            paymentMethodId: string;
         }[];
     } & {
         id: string;

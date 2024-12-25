@@ -45,9 +45,9 @@ export default class QuoteService {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
     assingMenu({ quote, item }: {
         quote: string;
@@ -80,9 +80,9 @@ export default class QuoteService {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
     create({ data }: {
         data: Prisma.QuoteCreateInput;

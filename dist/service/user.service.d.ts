@@ -428,9 +428,9 @@ export default class UserService {
     }): Promise<{
         id: string;
         createAt: Date;
+        mount: number;
         date: string | null;
         userId: string;
-        mount: number;
         status: string;
         paymentId: string;
     }>;
@@ -440,9 +440,9 @@ export default class UserService {
     }): Promise<{
         id: string;
         createAt: Date;
+        mount: number;
         date: string | null;
         userId: string;
-        mount: number;
         status: string;
         paymentId: string;
     }>;
@@ -540,9 +540,9 @@ export default class UserService {
             } & {
                 id: string;
                 createAt: Date;
+                mount: number;
                 date: string | null;
                 userId: string;
-                mount: number;
                 status: string;
                 paymentId: string;
             })[];

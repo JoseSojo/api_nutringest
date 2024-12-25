@@ -7,7 +7,6 @@ const path_1 = require("path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public'));
-    console.log((0, path_1.join)(__dirname, '..', 'public'));
     app.setGlobalPrefix(`/api/v1`);
     app.enableCors();
     app.use(cookieParser());

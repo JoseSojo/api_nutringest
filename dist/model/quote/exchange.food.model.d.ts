@@ -11,9 +11,9 @@ export default class ExchangeListFoodModel {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     findAll({ skip, take, filter, select }: {
         skip?: number;
@@ -21,6 +21,15 @@ export default class ExchangeListFoodModel {
         filter?: Prisma.ExchangeListFoodsWhereInput;
         select?: Prisma.UserSelect;
     }): Promise<({
+        unityMeasureReference: {
+            id: string;
+            name: string;
+            createById: string;
+            isDelete: boolean;
+            createAt: Date;
+            updateAt: Date;
+            abr: string;
+        };
         foodReference: {
             id: string;
             name: string;
@@ -54,29 +63,29 @@ export default class ExchangeListFoodModel {
             vitaminaB6: Prisma.Decimal;
             acidAscorb: Prisma.Decimal;
         };
-        unityMeasureReference: {
-            id: string;
-            name: string;
-            createById: string;
-            isDelete: boolean;
-            createAt: Date;
-            updateAt: Date;
-            abr: string;
-        };
     } & {
         id: string;
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     })[]>;
     find({ filter, select }: {
         filter?: Prisma.ExchangeListFoodsWhereInput;
         select?: Prisma.UserSelect;
     }): Promise<{
+        unityMeasureReference: {
+            id: string;
+            name: string;
+            createById: string;
+            isDelete: boolean;
+            createAt: Date;
+            updateAt: Date;
+            abr: string;
+        };
         foodReference: {
             id: string;
             name: string;
@@ -110,24 +119,15 @@ export default class ExchangeListFoodModel {
             vitaminaB6: Prisma.Decimal;
             acidAscorb: Prisma.Decimal;
         };
-        unityMeasureReference: {
-            id: string;
-            name: string;
-            createById: string;
-            isDelete: boolean;
-            createAt: Date;
-            updateAt: Date;
-            abr: string;
-        };
     } & {
         id: string;
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     count({ filter }: {
         filter?: Prisma.ExchangeListFoodsWhereInput;
@@ -141,9 +141,9 @@ export default class ExchangeListFoodModel {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     softDelete({ id }: {
         id: string;
@@ -153,9 +153,9 @@ export default class ExchangeListFoodModel {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     delete({ id }: {
         id: string;
@@ -165,9 +165,9 @@ export default class ExchangeListFoodModel {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     recovery({ id }: {
         id: string;
@@ -177,8 +177,8 @@ export default class ExchangeListFoodModel {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
 }

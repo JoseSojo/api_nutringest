@@ -41,9 +41,9 @@ export default class ExchangeListService {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     udpateFood({ data, id }: {
         id: string;
@@ -54,9 +54,9 @@ export default class ExchangeListService {
         createAt: Date;
         updateAt: Date | null;
         ration: string | null;
-        foodId: string;
         unityMeasureId: string | null;
         exchangeListId: string;
+        foodId: string;
     }>;
     udpate({ data, id }: {
         data: Prisma.ExchangeListUpdateInput;
@@ -219,6 +219,25 @@ export default class ExchangeListService {
                 name: string;
             };
             foods: ({
+                unityMeasureReference: {
+                    id: string;
+                    name: string;
+                    createById: string;
+                    isDelete: boolean;
+                    createAt: Date;
+                    updateAt: Date;
+                    abr: string;
+                };
+                exchangeListReference: {
+                    id: string;
+                    name: string;
+                    isDelete: boolean;
+                    createAt: Date;
+                    updateAt: Date | null;
+                    userId: string;
+                    ration: string | null;
+                    unityId: string | null;
+                };
                 foodReference: {
                     id: string;
                     name: string;
@@ -252,34 +271,15 @@ export default class ExchangeListService {
                     vitaminaB6: Prisma.Decimal;
                     acidAscorb: Prisma.Decimal;
                 };
-                unityMeasureReference: {
-                    id: string;
-                    name: string;
-                    createById: string;
-                    isDelete: boolean;
-                    createAt: Date;
-                    updateAt: Date;
-                    abr: string;
-                };
-                exchangeListReference: {
-                    id: string;
-                    name: string;
-                    isDelete: boolean;
-                    createAt: Date;
-                    updateAt: Date | null;
-                    userId: string;
-                    ration: string | null;
-                    unityId: string | null;
-                };
             } & {
                 id: string;
                 isDelete: boolean;
                 createAt: Date;
                 updateAt: Date | null;
                 ration: string | null;
-                foodId: string;
                 unityMeasureId: string | null;
                 exchangeListId: string;
+                foodId: string;
             })[];
             exchange: {
                 id: string;

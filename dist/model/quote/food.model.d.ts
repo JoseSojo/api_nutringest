@@ -10,9 +10,9 @@ export default class FoodAllModel {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
     findAll({ skip, take, filter, select }: {
         skip?: number;
@@ -20,6 +20,39 @@ export default class FoodAllModel {
         filter?: Prisma.FoodAllWhereInput;
         select?: Prisma.UserSelect;
     }): Promise<({
+        foodReference: {
+            id: string;
+            name: string;
+            isDelete: boolean;
+            createAt: Date;
+            updateAt: Date;
+            code: number;
+            quantity: Prisma.Decimal;
+            calorias: Prisma.Decimal;
+            humed: Prisma.Decimal;
+            proteina: Prisma.Decimal;
+            fosforo: Prisma.Decimal;
+            potasio: Prisma.Decimal;
+            grasas: Prisma.Decimal;
+            carbohidratosDisponibles: Prisma.Decimal;
+            carbohidratosTotales: Prisma.Decimal;
+            fibraTotal: Prisma.Decimal;
+            fibraInsolub: Prisma.Decimal;
+            cenizas: Prisma.Decimal;
+            calcio: Prisma.Decimal;
+            hierro: Prisma.Decimal;
+            magnesio: Prisma.Decimal;
+            zinc: Prisma.Decimal;
+            cobre: Prisma.Decimal;
+            sodio: Prisma.Decimal;
+            vitaminaA: Prisma.Decimal;
+            carotenoEquivTotal: Prisma.Decimal;
+            tiamina: Prisma.Decimal;
+            riboflavina: Prisma.Decimal;
+            niacina: Prisma.Decimal;
+            vitaminaB6: Prisma.Decimal;
+            acidAscorb: Prisma.Decimal;
+        };
         quoteReference: {
             nutricionistReference: {
                 id: string;
@@ -96,6 +129,19 @@ export default class FoodAllModel {
             lipidos: Prisma.Decimal | null;
             Carbohidratos: Prisma.Decimal | null;
         };
+    } & {
+        id: string;
+        isDelete: boolean;
+        createAt: Date;
+        updateAt: Date | null;
+        foodId: string;
+        quoteId: string;
+        type: string;
+    })[]>;
+    find({ filter, select }: {
+        filter?: Prisma.FoodAllWhereInput;
+        select?: Prisma.UserSelect;
+    }): Promise<{
         foodReference: {
             id: string;
             name: string;
@@ -129,19 +175,6 @@ export default class FoodAllModel {
             vitaminaB6: Prisma.Decimal;
             acidAscorb: Prisma.Decimal;
         };
-    } & {
-        id: string;
-        isDelete: boolean;
-        createAt: Date;
-        updateAt: Date | null;
-        type: string;
-        quoteId: string;
-        foodId: string;
-    })[]>;
-    find({ filter, select }: {
-        filter?: Prisma.FoodAllWhereInput;
-        select?: Prisma.UserSelect;
-    }): Promise<{
         quoteReference: {
             id: string;
             isDelete: boolean;
@@ -159,47 +192,14 @@ export default class FoodAllModel {
             lipidos: Prisma.Decimal | null;
             Carbohidratos: Prisma.Decimal | null;
         };
-        foodReference: {
-            id: string;
-            name: string;
-            isDelete: boolean;
-            createAt: Date;
-            updateAt: Date;
-            code: number;
-            quantity: Prisma.Decimal;
-            calorias: Prisma.Decimal;
-            humed: Prisma.Decimal;
-            proteina: Prisma.Decimal;
-            fosforo: Prisma.Decimal;
-            potasio: Prisma.Decimal;
-            grasas: Prisma.Decimal;
-            carbohidratosDisponibles: Prisma.Decimal;
-            carbohidratosTotales: Prisma.Decimal;
-            fibraTotal: Prisma.Decimal;
-            fibraInsolub: Prisma.Decimal;
-            cenizas: Prisma.Decimal;
-            calcio: Prisma.Decimal;
-            hierro: Prisma.Decimal;
-            magnesio: Prisma.Decimal;
-            zinc: Prisma.Decimal;
-            cobre: Prisma.Decimal;
-            sodio: Prisma.Decimal;
-            vitaminaA: Prisma.Decimal;
-            carotenoEquivTotal: Prisma.Decimal;
-            tiamina: Prisma.Decimal;
-            riboflavina: Prisma.Decimal;
-            niacina: Prisma.Decimal;
-            vitaminaB6: Prisma.Decimal;
-            acidAscorb: Prisma.Decimal;
-        };
     } & {
         id: string;
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
     count({ filter }: {
         filter?: Prisma.FoodAllWhereInput;
@@ -212,9 +212,9 @@ export default class FoodAllModel {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
     softDelete({ id }: {
         id: string;
@@ -223,9 +223,9 @@ export default class FoodAllModel {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
     recovery({ id }: {
         id: string;
@@ -234,8 +234,8 @@ export default class FoodAllModel {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date | null;
-        type: string;
-        quoteId: string;
         foodId: string;
+        quoteId: string;
+        type: string;
     }>;
 }

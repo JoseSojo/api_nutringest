@@ -21,6 +21,7 @@ export default class ConfigSubscriptionService {
         createAt: Date;
         updateAt: Date;
         mount: Prisma.Decimal;
+        paymentMethodId: string;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -28,7 +29,6 @@ export default class ConfigSubscriptionService {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
-        paymentMethodId: string;
     }[]>;
     deleteDetails({ id }: {
         id: string;
@@ -40,6 +40,7 @@ export default class ConfigSubscriptionService {
         createAt: Date;
         updateAt: Date;
         mount: Prisma.Decimal;
+        paymentMethodId: string;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -47,7 +48,6 @@ export default class ConfigSubscriptionService {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
-        paymentMethodId: string;
     }>;
     create({ data }: {
         data: Prisma.SubscriptionCreateInput;
@@ -164,6 +164,7 @@ export default class ConfigSubscriptionService {
                     createAt: Date;
                     updateAt: Date;
                     mount: Prisma.Decimal;
+                    paymentMethodId: string;
                     dayStart: number;
                     monthStart: number;
                     yearStart: number;
@@ -171,7 +172,6 @@ export default class ConfigSubscriptionService {
                     monthEnd: number;
                     yearEnd: number;
                     subscriptionId: string;
-                    paymentMethodId: string;
                 }[];
             } & {
                 id: string;
@@ -239,6 +239,7 @@ export default class ConfigSubscriptionService {
                 createAt: Date;
                 updateAt: Date;
                 mount: Prisma.Decimal;
+                paymentMethodId: string;
                 dayStart: number;
                 monthStart: number;
                 yearStart: number;
@@ -246,7 +247,6 @@ export default class ConfigSubscriptionService {
                 monthEnd: number;
                 yearEnd: number;
                 subscriptionId: string;
-                paymentMethodId: string;
             }[];
         } & {
             id: string;

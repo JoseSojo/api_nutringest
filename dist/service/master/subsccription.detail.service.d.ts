@@ -95,8 +95,6 @@ export default class ConfigSubscriptionHandlerService {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date;
-        status: string;
-        active: boolean;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -104,6 +102,8 @@ export default class ConfigSubscriptionHandlerService {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
+        status: string;
+        active: boolean;
         userById: string | null;
     }>;
     Create({ data }: {
@@ -116,6 +116,7 @@ export default class ConfigSubscriptionHandlerService {
         createAt: Date;
         updateAt: Date;
         mount: Prisma.Decimal;
+        paymentMethodId: string;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -123,7 +124,6 @@ export default class ConfigSubscriptionHandlerService {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
-        paymentMethodId: string;
     }>;
     FindMySub({ user }: {
         user: string;
@@ -172,8 +172,6 @@ export default class ConfigSubscriptionHandlerService {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date;
-        status: string;
-        active: boolean;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -181,6 +179,8 @@ export default class ConfigSubscriptionHandlerService {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
+        status: string;
+        active: boolean;
         userById: string | null;
     }>;
     HeaderList(): string[];

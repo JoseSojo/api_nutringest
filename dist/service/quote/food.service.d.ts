@@ -21,9 +21,9 @@ export default class FoodAllService {
             isDelete: boolean;
             createAt: Date;
             updateAt: Date | null;
-            type: string;
-            quoteId: string;
             foodId: string;
+            quoteId: string;
+            type: string;
         };
     } | {
         message: string;
@@ -41,9 +41,9 @@ export default class FoodAllService {
             isDelete: boolean;
             createAt: Date;
             updateAt: Date | null;
-            type: string;
-            quoteId: string;
             foodId: string;
+            quoteId: string;
+            type: string;
         };
     } | {
         message: string;
@@ -60,9 +60,9 @@ export default class FoodAllService {
             isDelete: boolean;
             createAt: Date;
             updateAt: Date | null;
-            type: string;
-            quoteId: string;
             foodId: string;
+            quoteId: string;
+            type: string;
         };
     } | {
         message: string;
@@ -81,6 +81,39 @@ export default class FoodAllService {
             previw: boolean;
             now: string;
             list: ({
+                foodReference: {
+                    id: string;
+                    name: string;
+                    isDelete: boolean;
+                    createAt: Date;
+                    updateAt: Date;
+                    code: number;
+                    quantity: Prisma.Decimal;
+                    calorias: Prisma.Decimal;
+                    humed: Prisma.Decimal;
+                    proteina: Prisma.Decimal;
+                    fosforo: Prisma.Decimal;
+                    potasio: Prisma.Decimal;
+                    grasas: Prisma.Decimal;
+                    carbohidratosDisponibles: Prisma.Decimal;
+                    carbohidratosTotales: Prisma.Decimal;
+                    fibraTotal: Prisma.Decimal;
+                    fibraInsolub: Prisma.Decimal;
+                    cenizas: Prisma.Decimal;
+                    calcio: Prisma.Decimal;
+                    hierro: Prisma.Decimal;
+                    magnesio: Prisma.Decimal;
+                    zinc: Prisma.Decimal;
+                    cobre: Prisma.Decimal;
+                    sodio: Prisma.Decimal;
+                    vitaminaA: Prisma.Decimal;
+                    carotenoEquivTotal: Prisma.Decimal;
+                    tiamina: Prisma.Decimal;
+                    riboflavina: Prisma.Decimal;
+                    niacina: Prisma.Decimal;
+                    vitaminaB6: Prisma.Decimal;
+                    acidAscorb: Prisma.Decimal;
+                };
                 quoteReference: {
                     nutricionistReference: {
                         id: string;
@@ -157,47 +190,14 @@ export default class FoodAllService {
                     lipidos: Prisma.Decimal | null;
                     Carbohidratos: Prisma.Decimal | null;
                 };
-                foodReference: {
-                    id: string;
-                    name: string;
-                    isDelete: boolean;
-                    createAt: Date;
-                    updateAt: Date;
-                    code: number;
-                    quantity: Prisma.Decimal;
-                    calorias: Prisma.Decimal;
-                    humed: Prisma.Decimal;
-                    proteina: Prisma.Decimal;
-                    fosforo: Prisma.Decimal;
-                    potasio: Prisma.Decimal;
-                    grasas: Prisma.Decimal;
-                    carbohidratosDisponibles: Prisma.Decimal;
-                    carbohidratosTotales: Prisma.Decimal;
-                    fibraTotal: Prisma.Decimal;
-                    fibraInsolub: Prisma.Decimal;
-                    cenizas: Prisma.Decimal;
-                    calcio: Prisma.Decimal;
-                    hierro: Prisma.Decimal;
-                    magnesio: Prisma.Decimal;
-                    zinc: Prisma.Decimal;
-                    cobre: Prisma.Decimal;
-                    sodio: Prisma.Decimal;
-                    vitaminaA: Prisma.Decimal;
-                    carotenoEquivTotal: Prisma.Decimal;
-                    tiamina: Prisma.Decimal;
-                    riboflavina: Prisma.Decimal;
-                    niacina: Prisma.Decimal;
-                    vitaminaB6: Prisma.Decimal;
-                    acidAscorb: Prisma.Decimal;
-                };
             } & {
                 id: string;
                 isDelete: boolean;
                 createAt: Date;
                 updateAt: Date | null;
-                type: string;
-                quoteId: string;
                 foodId: string;
+                quoteId: string;
+                type: string;
             })[];
             header: string[];
             headerMin: string[];
@@ -215,23 +215,6 @@ export default class FoodAllService {
         message: string;
         error: boolean;
         body: {
-            quoteReference: {
-                id: string;
-                isDelete: boolean;
-                createAt: Date;
-                updateAt: Date | null;
-                description: string | null;
-                weightNow: Prisma.Decimal | null;
-                weightPreview: Prisma.Decimal | null;
-                weightObjective: Prisma.Decimal | null;
-                nutricionistId: string;
-                patientId: string;
-                exercise: string | null;
-                sleep: string | null;
-                proteinas: Prisma.Decimal | null;
-                lipidos: Prisma.Decimal | null;
-                Carbohidratos: Prisma.Decimal | null;
-            };
             foodReference: {
                 id: string;
                 name: string;
@@ -265,14 +248,31 @@ export default class FoodAllService {
                 vitaminaB6: Prisma.Decimal;
                 acidAscorb: Prisma.Decimal;
             };
+            quoteReference: {
+                id: string;
+                isDelete: boolean;
+                createAt: Date;
+                updateAt: Date | null;
+                description: string | null;
+                weightNow: Prisma.Decimal | null;
+                weightPreview: Prisma.Decimal | null;
+                weightObjective: Prisma.Decimal | null;
+                nutricionistId: string;
+                patientId: string;
+                exercise: string | null;
+                sleep: string | null;
+                proteinas: Prisma.Decimal | null;
+                lipidos: Prisma.Decimal | null;
+                Carbohidratos: Prisma.Decimal | null;
+            };
         } & {
             id: string;
             isDelete: boolean;
             createAt: Date;
             updateAt: Date | null;
-            type: string;
-            quoteId: string;
             foodId: string;
+            quoteId: string;
+            type: string;
         };
     } | {
         message: string;

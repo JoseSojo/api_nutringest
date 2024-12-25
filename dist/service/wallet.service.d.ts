@@ -17,38 +17,38 @@ export default class WalletService {
         mount: number;
     }): Promise<{
         id: string;
-        userId: string;
         mount: Prisma.Decimal;
+        userId: string;
     }>;
     decrement({ id, mount }: {
         id: string;
         mount: number;
     }): Promise<{
         id: string;
-        userId: string;
         mount: Prisma.Decimal;
+        userId: string;
     }>;
     get({ id, mount }: {
         id: string;
         mount: number;
     }): Promise<{
         id: string;
-        userId: string;
         mount: Prisma.Decimal;
+        userId: string;
     }>;
     findUser({ id }: {
         id: string;
     }): Promise<{
         id: string;
-        userId: string;
         mount: Prisma.Decimal;
+        userId: string;
     }>;
     create({ userId, mount, }: {
         userId: string;
         mount: number;
     }): Promise<{
         id: string;
-        userId: string;
         mount: Prisma.Decimal;
+        userId: string;
     }>;
 }

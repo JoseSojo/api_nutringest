@@ -20,8 +20,6 @@ export default class ConfigSubscriptionHandlerModel {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date;
-        status: string;
-        active: boolean;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -29,6 +27,8 @@ export default class ConfigSubscriptionHandlerModel {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
+        status: string;
+        active: boolean;
         userById: string | null;
     }>;
     findMySubscription({ user }: {
@@ -78,8 +78,6 @@ export default class ConfigSubscriptionHandlerModel {
         isDelete: boolean;
         createAt: Date;
         updateAt: Date;
-        status: string;
-        active: boolean;
         dayStart: number;
         monthStart: number;
         yearStart: number;
@@ -87,6 +85,8 @@ export default class ConfigSubscriptionHandlerModel {
         monthEnd: number;
         yearEnd: number;
         subscriptionId: string;
+        status: string;
+        active: boolean;
         userById: string | null;
     }>;
 }

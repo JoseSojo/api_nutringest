@@ -234,6 +234,13 @@ export default class UserService {
             },
             where: {
                 id
+            },
+            include: {
+                paymentInUser: {
+                    include: {
+                        paymentReference: true
+                    }
+                }
             }
         });
 

@@ -110,19 +110,33 @@ export default class UserController {
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit().udpate;
 
+        const findPromise = fetch(`https://pydolarve.org/api/v1/dollar`); // change monitor dolar
         const responsePromise = this.service.FinanceUpdate({ id:param.id,status:query.status });
 
         // LOG
 
         const response = await responsePromise;
 
+        const thisDollar = response.paymentInUser.paymentReference.dolar;
+
+        let change: number | null = null;
+
+        if(!thisDollar) {
+            const result = await findPromise;
+            const json = await result.json();
+            const mount = json.monitors.bcv.price;
+            change = Number(mount);
+        }
+
+        console.log(`Dolar: ${thisDollar}`, `Monto a aumentar: ${response.mount}`, `tasa de cambio bcv: ${change}`);
+
         if(query.status === `APROVADO`) {
             const findWallet = await this.wallet.findUser({ id:response.userId });
             if(findWallet) {
-                await this.wallet.increment({ id:findWallet.id, mount:response.mount });
+                await this.wallet.increment({ id:findWallet.id, mount:change !== null ? response.mount/change : response.mount });
             }
             else {
-                await this.wallet.create({ userId:response.userId,mount:response.mount });
+                await this.wallet.create({ userId:response.userId,mount:change !== null ? response.mount/change : response.mount });
             }
         }
 

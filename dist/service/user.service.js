@@ -200,6 +200,13 @@ let UserService = class UserService {
             },
             where: {
                 id
+            },
+            include: {
+                paymentInUser: {
+                    include: {
+                        paymentReference: true
+                    }
+                }
             }
         });
         if (status === `APROVADO`) {

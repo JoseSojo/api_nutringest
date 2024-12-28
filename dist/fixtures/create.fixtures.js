@@ -325,7 +325,8 @@ let FixtureCreate = class FixtureCreate {
                     moneyReference: { connect: { id: bolivarId } },
                     description: `0102 04125727034 28482348`,
                     name: `Pago móvil - Venezuela`,
-                    required: [`Cédula`, `Teléfono`, `Banco`]
+                    required: [`Cédula`, `Teléfono`, `Banco`],
+                    dolar: false
                 },
                 filter: { id: bcv.id }
             });
@@ -337,7 +338,8 @@ let FixtureCreate = class FixtureCreate {
                     moneyReference: { connect: { id: bolivarId } },
                     description: `0102 04125727034 28482348`,
                     name: `Pago móvil - Venezuela`,
-                    required: [`Cédula`, `Teléfono`, `Banco`]
+                    required: [`Cédula`, `Teléfono`, `Banco`],
+                    dolar: false
                 }
             });
         }
@@ -348,7 +350,8 @@ let FixtureCreate = class FixtureCreate {
                     moneyReference: { connect: { id: bolivarId } },
                     description: `0102 04125727034 28482348`,
                     name: `Pago móvil - Otros bancos`,
-                    required: [`Cédula`, `Teléfono`, `Banco`]
+                    required: [`Cédula`, `Teléfono`, `Banco`],
+                    dolar: false
                 },
                 filter: { id: otherBank.id }
             });
@@ -360,7 +363,8 @@ let FixtureCreate = class FixtureCreate {
                     moneyReference: { connect: { id: bolivarId } },
                     description: `0102 04125727034 28482348`,
                     name: `Pago móvil - Otros bancos`,
-                    required: [`Cédula`, `Teléfono`, `Banco`]
+                    required: [`Cédula`, `Teléfono`, `Banco`],
+                    dolar: false
                 }
             });
         }

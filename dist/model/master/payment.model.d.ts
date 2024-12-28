@@ -13,6 +13,7 @@ export default class PaymentMethodModel {
         createAt: Date;
         updateAt: Date | null;
         description: string;
+        dolar: boolean;
         required: Prisma.JsonValue | null;
         moneyId: string;
     }>;
@@ -69,6 +70,7 @@ export default class PaymentMethodModel {
         createAt: Date;
         updateAt: Date | null;
         description: string;
+        dolar: boolean;
         required: Prisma.JsonValue | null;
         moneyId: string;
     })[]>;
@@ -123,6 +125,7 @@ export default class PaymentMethodModel {
         createAt: Date;
         updateAt: Date | null;
         description: string;
+        dolar: boolean;
         required: Prisma.JsonValue | null;
         moneyId: string;
     }>;
@@ -140,6 +143,7 @@ export default class PaymentMethodModel {
         createAt: Date;
         updateAt: Date | null;
         description: string;
+        dolar: boolean;
         required: Prisma.JsonValue | null;
         moneyId: string;
     }>;
@@ -153,6 +157,7 @@ export default class PaymentMethodModel {
         createAt: Date;
         updateAt: Date | null;
         description: string;
+        dolar: boolean;
         required: Prisma.JsonValue | null;
         moneyId: string;
     }>;
@@ -166,6 +171,7 @@ export default class PaymentMethodModel {
         createAt: Date;
         updateAt: Date | null;
         description: string;
+        dolar: boolean;
         required: Prisma.JsonValue | null;
         moneyId: string;
     }>;

@@ -393,6 +393,7 @@ export default class UserService {
                     createAt: Date;
                     updateAt: Date | null;
                     description: string;
+                    dolar: boolean;
                     required: Prisma.JsonValue | null;
                     moneyId: string;
                 };
@@ -438,6 +439,29 @@ export default class UserService {
         id: string;
         status: string;
     }): Promise<{
+        paymentInUser: {
+            paymentReference: {
+                id: string;
+                name: string;
+                createById: string;
+                isDelete: boolean;
+                createAt: Date;
+                updateAt: Date | null;
+                description: string;
+                dolar: boolean;
+                required: Prisma.JsonValue | null;
+                moneyId: string;
+            };
+        } & {
+            id: string;
+            isDelete: boolean;
+            createAt: Date;
+            updateAt: Date | null;
+            description: string;
+            userId: string;
+            paymenthId: string;
+        };
+    } & {
         id: string;
         createAt: Date;
         mount: number;
@@ -525,6 +549,7 @@ export default class UserService {
                         createAt: Date;
                         updateAt: Date | null;
                         description: string;
+                        dolar: boolean;
                         required: Prisma.JsonValue | null;
                         moneyId: string;
                     };

@@ -198,7 +198,7 @@ model TaskSeondPlanSubscription {
 model Wallet {
   id                    String              @id               @default(uuid())
 
-  mount                 Decimal
+  mount                 Decimal             @db.Decimal(10,2)
 
   userId                String              @unique
   userReference         User                @relation(fields: [userId], references: [id])
@@ -583,6 +583,8 @@ model PaymentMethod {
   name                    String
   description             String
 
+  dolar                   Boolean               @default(true)
+
   required                Json?  
 
   moneyId                 String
@@ -872,3 +874,16 @@ model StaticticsForYear {
   createAt                DateTime            @default(now())
 }
 
+model Logs {
+  id                  String              @id               @default(uuid())
+  description         Json
+
+  start               Boolean
+
+  day                 Int
+  month               Int
+  year                Int
+  hour                Int
+  minute              Int
+  second              Int
+}

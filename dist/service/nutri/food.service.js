@@ -119,10 +119,10 @@ let PrimitiveFoodService = class PrimitiveFoodService {
         }
     }
     HeaderList() {
-        return [`Código`, `Nombre`, `Calorias`, `Proteina`];
+        return [`Código`, `Nombre`];
     }
     HeaderListExtract() {
-        return [`code`, `name`, `calorias`, `proteina`];
+        return [`code`, `name`];
     }
     HeaderUnique() {
         return [`Código`, `Nombre`, `Calorias`, `Proteina`];

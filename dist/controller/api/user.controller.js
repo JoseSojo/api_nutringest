@@ -18,11 +18,13 @@ const AuthGuard_1 = require("../../guards/AuthGuard");
 const languaje_service_1 = require("../../languaje/languaje.service");
 const permit_model_1 = require("../../model/permit.model");
 const user_model_1 = require("../../model/user.model");
+const prisma_service_1 = require("../../prisma/prisma.service");
 const payment_service_1 = require("../../service/master/payment.service");
+const subsccription_detail_service_1 = require("../../service/master/subsccription.detail.service");
 const user_service_1 = require("../../service/user.service");
 const wallet_service_1 = require("../../service/wallet.service");
 let UserController = class UserController {
-    constructor(service, model, paymentService, permit, permitModel, languaje, wallet) {
+    constructor(service, model, paymentService, permit, permitModel, languaje, wallet, subscripitonDetail, prisma) {
         this.service = service;
         this.model = model;
         this.paymentService = paymentService;
@@ -30,6 +32,8 @@ let UserController = class UserController {
         this.permitModel = permitModel;
         this.languaje = languaje;
         this.wallet = wallet;
+        this.subscripitonDetail = subscripitonDetail;
+        this.prisma = prisma;
         this.lang = this.languaje.GetTranslate();
     }
     async paginate(req, query) {
@@ -271,6 +275,8 @@ let UserController = class UserController {
             data.propietaryCode = await this.service.generateCode();
         }
         const responsePromise = this.service.create({ data });
+        const dates = this.subscripitonDetail.GetDateFreeTrial();
+        const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } });
         const response = await responsePromise;
         if (response.error) {
             return {
@@ -278,6 +284,23 @@ let UserController = class UserController {
                 error: response.error
             };
         }
+        const dataSubscriptionDetail = {
+            active: true,
+            status: `FREE_TRIAL`,
+            subscriptionReference: {
+                connect: { id: sub.id }
+            },
+            userByReference: {
+                connect: { id: response.body.id }
+            },
+            dayEnd: dates.end.day,
+            monthEnd: dates.end.month,
+            yearEnd: dates.end.year,
+            dayStart: dates.start.day,
+            monthStart: dates.start.month,
+            yearStart: dates.start.year,
+        };
+        await this.subscripitonDetail.CreateSubscription({ data: dataSubscriptionDetail });
         return {
             message: response.message,
             error: response.error,
@@ -490,7 +513,9 @@ UserController = __decorate([
         AppActions_1.default,
         permit_model_1.default,
         languaje_service_1.LanguajeService,
-        wallet_service_1.default])
+        wallet_service_1.default,
+        subsccription_detail_service_1.default,
+        prisma_service_1.PrismaService])
 ], UserController);
 exports.default = UserController;
 //# sourceMappingURL=user.controller.js.map

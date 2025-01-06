@@ -19,7 +19,7 @@ export default class MenuModel {
         const result = this.prisma.menu.findMany({ 
             skip, 
             take, 
-            where: filter, 
+            where: {AND:[{...filter},{ isDelete:false }]}, 
             include: {
                 _count: {
                     select: {
@@ -36,7 +36,7 @@ export default class MenuModel {
 
     public async find({ filter, select }: { filter?:Prisma.MenuWhereInput, select?:Prisma.UserSelect }) {
         const result = this.prisma.menu.findFirst({ 
-            where: filter, 
+            where: {AND:[{...filter},{ isDelete:false }]}, 
             include: {
                 _count: true,
                 createByReference: true,

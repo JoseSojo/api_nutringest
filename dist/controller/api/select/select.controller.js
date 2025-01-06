@@ -56,7 +56,6 @@ let SelectController = class SelectController {
             { id: `DESAYUNO`, label: `DESAYUNO` },
             { id: `MERIENDA`, label: `MERIENDA` },
             { id: `ALMUERZO`, label: `ALMUERZO` },
-            { id: `MERIENDA`, label: `MERIENDA` },
             { id: `CENA`, label: `CENA` },
         ];
         return customReturn;

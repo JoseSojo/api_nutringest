@@ -141,11 +141,11 @@ export default class PrimitiveFoodService {
     }
 
     public HeaderList (): string[] {
-        return [`Código`,`Nombre`,`Calorias`,`Proteina`];
+        return [`Código`,`Nombre`];
     }
 
     public HeaderListExtract (): string[] {
-        return [`code`,`name`,`calorias`,`proteina`];
+        return [`code`,`name`];
     }
 
     public HeaderUnique (): string[] {

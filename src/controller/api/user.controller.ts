@@ -1,12 +1,16 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import AppActions from "src/AppActions";
+import AppCoupon from "src/AppCoupon";
 import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
 import PermitModel from "src/model/permit.model";
 import UserModel from "src/model/user.model";
+import { PrismaService } from "src/prisma/prisma.service";
+import CouponService from "src/service/coupon.service";
 import PaymentMethodService from "src/service/master/payment.service";
+import ConfigSubscriptionHandlerService from "src/service/master/subsccription.detail.service";
 import UserService from "src/service/user.service";
 import WalletService from "src/service/wallet.service";
 
@@ -20,8 +24,10 @@ export default class UserController {
         private paymentService: PaymentMethodService,
         private permit: AppActions,
         private permitModel: PermitModel,
-        private languaje: LanguajeService, 
-        private wallet: WalletService
+        private languaje: LanguajeService,
+        private wallet: WalletService,
+        private subscripitonDetail: ConfigSubscriptionHandlerService,
+        private prisma: PrismaService
     ) {
         this.lang = this.languaje.GetTranslate()
     }
@@ -80,17 +86,17 @@ export default class UserController {
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit().udpate;
 
-            // validación de permisos
+        // validación de permisos
         // const valid = permit.includes(action);
         // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
 
         // validación de datos
 
-        
+
         // validar subscripción
         // validar ciudad
 
-        const responsePromise = this.service.Finance({ date:body.date,mount:Number(body.mount),payment:body.payment,userId:user.id });
+        const responsePromise = this.service.Finance({ date: body.date, mount: Number(body.mount), payment: body.payment, userId: user.id });
 
         // LOG
 
@@ -105,13 +111,13 @@ export default class UserController {
 
     @Put(`update/:id/finance`)
     @UseGuards(AuthGuard)
-    private async udpateStatusFinance(@Req() req: any, @Body() body: any, @Param() param: {id:string}, @Query() query:{status:string}) {
+    private async udpateStatusFinance(@Req() req: any, @Body() body: any, @Param() param: { id: string }, @Query() query: { status: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit().udpate;
 
         const findPromise = fetch(`https://pydolarve.org/api/v1/dollar`); // change monitor dolar
-        const responsePromise = this.service.FinanceUpdate({ id:param.id,status:query.status });
+        const responsePromise = this.service.FinanceUpdate({ id: param.id, status: query.status });
 
         // LOG
 
@@ -121,7 +127,7 @@ export default class UserController {
 
         let change: number | null = null;
 
-        if(!thisDollar) {
+        if (!thisDollar) {
             const result = await findPromise;
             const json = await result.json();
             const mount = json.monitors.bcv.price;
@@ -130,13 +136,13 @@ export default class UserController {
 
         console.log(`Dolar: ${thisDollar}`, `Monto a aumentar: ${response.mount}`, `tasa de cambio bcv: ${change}`);
 
-        if(query.status === `APROVADO`) {
-            const findWallet = await this.wallet.findUser({ id:response.userId });
-            if(findWallet) {
-                await this.wallet.increment({ id:findWallet.id, mount:change !== null ? response.mount/change : response.mount });
+        if (query.status === `APROVADO`) {
+            const findWallet = await this.wallet.findUser({ id: response.userId });
+            if (findWallet) {
+                await this.wallet.increment({ id: findWallet.id, mount: change !== null ? response.mount / change : response.mount });
             }
             else {
-                await this.wallet.create({ userId:response.userId,mount:change !== null ? response.mount/change : response.mount });
+                await this.wallet.create({ userId: response.userId, mount: change !== null ? response.mount / change : response.mount });
             }
         }
 
@@ -167,7 +173,7 @@ export default class UserController {
         // lógica
         // if (query.param) customFilter.push({  });
 
-        if(user.rolReference.name === this.permit.USER_NUTRICIONISTA) customFilter.push({ userId:user.id });
+        if (user.rolReference.name === this.permit.USER_NUTRICIONISTA) customFilter.push({ userId: user.id });
 
         // validar eliminación
         // if (true) customFilter.push({ isDelete: false });
@@ -217,7 +223,7 @@ export default class UserController {
         // if (true) customFilter.push({ isDelete: false });
         // const filter: Prisma.WhereInput = { AND: customFilter };
 
-        const responsePromise = this.wallet.findUser({ id:user.id });
+        const responsePromise = this.wallet.findUser({ id: user.id });
 
         const response = await responsePromise;
 
@@ -235,7 +241,7 @@ export default class UserController {
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit().udpate;
 
-            // validación de permisos
+        // validación de permisos
         // const valid = permit.includes(action);
         // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
 
@@ -243,7 +249,7 @@ export default class UserController {
 
         const data: Prisma.PaymetInUserCreateInput = {
             userReference: { connect: { id: user.id } },
-            paymentReference: { connect:{ id:body.payment } },
+            paymentReference: { connect: { id: body.payment } },
             description: body.description
         }
 
@@ -332,11 +338,11 @@ export default class UserController {
         const skip = query.skip ? Number(query.skip) : 0;
         const take = query.take ? Number(query.take) : 10;
         const customFilter: Prisma.PaymetInUserWhereInput[] = [];
-        customFilter.push({ userId:user.id });
+        customFilter.push({ userId: user.id });
 
         // lógica
         if (query.param) customFilter.push({ description: { contains: query.param } });
-        if (query.param) customFilter.push({ paymentReference: {name:{ contains: query.param }} });
+        if (query.param) customFilter.push({ paymentReference: { name: { contains: query.param } } });
 
         // validar eliminación
         if (true) customFilter.push({ isDelete: false });
@@ -421,7 +427,7 @@ export default class UserController {
             rolReference: { connect: { id: findPermit.id } }
         }
 
-        if(findPermit.id === this.permit.USER_NUTRICIONISTA) {
+        if (findPermit.id === this.permit.USER_NUTRICIONISTA) {
             data.propietaryCode = await this.service.generateCode();
         }
 
@@ -432,6 +438,10 @@ export default class UserController {
 
         // LOG
 
+        const dates = this.subscripitonDetail.GetDateFreeTrial();
+
+        const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } })
+
         const response = await responsePromise;
 
         if (response.error) {
@@ -440,6 +450,31 @@ export default class UserController {
                 error: response.error
             }
         }
+
+        const dataSubscriptionDetail: Prisma.SubscriptionInUserCreateInput = {
+            active: true,
+            status: `FREE_TRIAL`,
+
+            subscriptionReference: {
+                connect: { id: sub.id }
+            },
+
+            userByReference: {
+                connect: { id: response.body.id }
+            },
+
+            dayEnd: dates.end.day,
+            monthEnd: dates.end.month,
+            yearEnd: dates.end.year,
+
+            dayStart: dates.start.day,
+            monthStart: dates.start.month,
+            yearStart: dates.start.year,
+
+        }
+
+        await this.subscripitonDetail.CreateSubscription({ data: dataSubscriptionDetail })
+
 
         return {
             message: response.message,
@@ -463,24 +498,24 @@ export default class UserController {
 
         const data: Prisma.UserUpdateInput = {}
 
-        if(body.name) data.name = body.name;
-        if(body.lastname) data.lastname = body.lastname;
-        if(body.username) data.username = body.username;
-        if(body.email) data.email = body.email;
-        if(body.genero) data.genero = body.genero;
-        if(body.ci) data.ci = body.ci;
-        if(body.age) data.age = Number(body.age);
-        if(body.lastname2) data.lastname2 = body.lastname2;
-        if(body.name2) data.name2 = body.name2;
-        if(body.nacionality) data.nacionality = body.nacionality;
+        if (body.name) data.name = body.name;
+        if (body.lastname) data.lastname = body.lastname;
+        if (body.username) data.username = body.username;
+        if (body.email) data.email = body.email;
+        if (body.genero) data.genero = body.genero;
+        if (body.ci) data.ci = body.ci;
+        if (body.age) data.age = Number(body.age);
+        if (body.lastname2) data.lastname2 = body.lastname2;
+        if (body.name2) data.name2 = body.name2;
+        if (body.nacionality) data.nacionality = body.nacionality;
 
-        if(body.email) data.email = body.email;
-        if(body.phone) data.phone = body.phone;
-        if(body.email2) data.email2 = body.email2;
-        if(body.phone2) data.phone2 = body.phone2;
+        if (body.email) data.email = body.email;
+        if (body.phone) data.phone = body.phone;
+        if (body.email2) data.email2 = body.email2;
+        if (body.phone2) data.phone2 = body.phone2;
 
 
-        if(body.city) data.cityReference = { connect:{ id:body.city } }
+        if (body.city) data.cityReference = { connect: { id: body.city } }
 
         const responsePromise = this.service.udpate({ data, id: param.id });
 

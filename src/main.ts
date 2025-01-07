@@ -19,6 +19,7 @@ async function bootstrap() {
   //   prefix: '/public/',
   // });
 
+  console.log(process.env.PORT);
   app.enableCors();
   app.use(cookieParser());
   await app.listen(process.env.PORT || 3005);

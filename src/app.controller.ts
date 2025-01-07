@@ -8,6 +8,16 @@ export class AppController {
         private fixturesCreate: FixtureCreate
     ) {}
 
+
+
+    @Get(`found`)
+    public async found () {
+        return {
+            port: process.env.PORT,
+            api: `nutrivues`
+        }
+    }
+
     @Get(`start/permit`)
     public async startPermit () {
 	console.log(`permit`)

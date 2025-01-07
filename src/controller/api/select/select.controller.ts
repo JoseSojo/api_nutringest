@@ -129,7 +129,7 @@ export default class SelectController {
         listPromise.body.list.forEach((item) => {
             customReturn.push({
                 id: item.id,
-                label: item.name
+                label: `${item.name} ${item.lastname} - ${item.age}`
             })
         });
 

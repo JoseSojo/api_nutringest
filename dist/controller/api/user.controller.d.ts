@@ -1,0 +1,37 @@
+import AppActions from "src/AppActions";
+import { LanguajeService } from "src/languaje/languaje.service";
+import PermitModel from "src/model/permit.model";
+import UserModel from "src/model/user.model";
+import { PrismaService } from "src/prisma/prisma.service";
+import PaymentMethodService from "src/service/master/payment.service";
+import ConfigSubscriptionHandlerService from "src/service/master/subsccription.detail.service";
+import UserService from "src/service/user.service";
+import WalletService from "src/service/wallet.service";
+export default class UserController {
+    private service;
+    private model;
+    private paymentService;
+    private permit;
+    private permitModel;
+    private languaje;
+    private wallet;
+    private subscripitonDetail;
+    private prisma;
+    private lang;
+    constructor(service: UserService, model: UserModel, paymentService: PaymentMethodService, permit: AppActions, permitModel: PermitModel, languaje: LanguajeService, wallet: WalletService, subscripitonDetail: ConfigSubscriptionHandlerService, prisma: PrismaService);
+    private paginate;
+    private createFinance;
+    private udpateStatusFinance;
+    private financePaginate;
+    private findWallet;
+    private createPayment;
+    private paymentAll;
+    private paymentMy;
+    private unique;
+    private create;
+    private update;
+    private delete;
+    private getActionsList;
+    private getActionsUnique;
+    private getPermit;
+}

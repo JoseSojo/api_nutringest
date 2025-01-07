@@ -10,32 +10,38 @@ export class AppController {
 
     @Get(`start/permit`)
     public async startPermit () {
+	console.log(`permit`)
         this.fixturesCreate.permitFix();
     }
 
     @Get(`start/user`)
     public async startUser () {
+	console.log(`user`)
         this.fixturesCreate.userFix();
     }
 
     @Get(`start/regional`)
     public async startRegional () {
-        this.fixturesCreate.regionalFix();
+	console.log(`regional`)        
+this.fixturesCreate.regionalFix();
     }
 
     @Get(`start/payment`)
     public async startPayment () {
-        this.fixturesCreate.paymentFix();
+	console.log(`payment`)        
+this.fixturesCreate.paymentFix();
     }
 
     @Get(`start/unity`)
     public async startUnity () {
-        this.fixturesCreate.unityFix();
+	console.log(`unity`)        
+this.fixturesCreate.unityFix();
     }
 
     @Get(`start/subscription`)
     public async startSubscription () {
-        this.fixturesCreate.subscriptionFix();
+	console.log(`subcription`)        
+this.fixturesCreate.subscriptionFix();
     }
 
 }

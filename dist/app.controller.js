@@ -17,21 +17,27 @@ let AppController = class AppController {
         this.fixturesCreate = fixturesCreate;
     }
     async startPermit() {
+        console.log(`permit`);
         this.fixturesCreate.permitFix();
     }
     async startUser() {
+        console.log(`user`);
         this.fixturesCreate.userFix();
     }
     async startRegional() {
+        console.log(`regional`);
         this.fixturesCreate.regionalFix();
     }
     async startPayment() {
+        console.log(`payment`);
         this.fixturesCreate.paymentFix();
     }
     async startUnity() {
+        console.log(`unity`);
         this.fixturesCreate.unityFix();
     }
     async startSubscription() {
+        console.log(`subcription`);
         this.fixturesCreate.subscriptionFix();
     }
 };

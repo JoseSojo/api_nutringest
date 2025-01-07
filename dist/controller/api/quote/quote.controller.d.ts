@@ -1,0 +1,36 @@
+import AppActions from "src/AppActions";
+import AppEvent from "src/AppEvent";
+import { LanguajeService } from "src/languaje/languaje.service";
+import CalendarService from "src/service/calendar.service";
+import HistoryService from "src/service/history.service";
+import QuoteService from "src/service/quote/quote.service";
+export default class QuoteController {
+    private service;
+    private appEvents;
+    private historyService;
+    private calendar;
+    private permit;
+    private languaje;
+    private lang;
+    constructor(service: QuoteService, appEvents: AppEvent, historyService: HistoryService, calendar: CalendarService, permit: AppActions, languaje: LanguajeService);
+    private uploadPhoto;
+    private removeExchange;
+    private removeMenu;
+    private removeFood;
+    private connectExchange;
+    private connectMenu;
+    private connectFood;
+    private paginate;
+    private history;
+    private calendarPaginate;
+    private photo;
+    private unique;
+    private create;
+    private update;
+    private delete;
+    private getActionsList;
+    private getActionsUnique;
+    private getPermit;
+    private getSections;
+    private objectName;
+}

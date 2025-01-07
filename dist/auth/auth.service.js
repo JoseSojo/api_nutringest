@@ -1,60 +1,50 @@
-import { Injectable } from '@nestjs/common';
-import { LanguajeService } from 'src/languaje/languaje.service';
-import { LanguajeInterface } from 'src/languaje/guard/languaje.interface';
-import { Prisma, User } from '@prisma/client';
-import { AuthLogin, AuthRegister } from './guard/auth.guard';
-import { JwtService } from '@nestjs/jwt';
-import UserService from 'src/service/user.service';
-import PermitService from 'src/service/permit.service';
-import { FORM } from 'src/validation/types/FromInterface';
-import AppActions from 'src/AppActions';
-import AppCoupon from 'src/AppCoupon';
-import CouponService from 'src/service/coupon.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import ConfigSubscriptionHandlerService from 'src/service/master/subsccription.detail.service';
-
-
-@Injectable()
-export default class AuthService {
-
-    private lang: LanguajeInterface
-
-    constructor(
-        private userService: UserService,
-        private languajeService: LanguajeService,
-        private jwt: JwtService,
-        private permit: PermitService,
-        private appPermit: AppActions,
-        private prisma: PrismaService,
-        private coupon: AppCoupon,
-        private couponService: CouponService,
-        private subscripitonDetail: ConfigSubscriptionHandlerService,
-    ) {
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const common_1 = require("@nestjs/common");
+const languaje_service_1 = require("../languaje/languaje.service");
+const jwt_1 = require("@nestjs/jwt");
+const user_service_1 = require("../service/user.service");
+const permit_service_1 = require("../service/permit.service");
+const AppActions_1 = require("../AppActions");
+const AppCoupon_1 = require("../AppCoupon");
+const coupon_service_1 = require("../service/coupon.service");
+const prisma_service_1 = require("../prisma/prisma.service");
+const subsccription_detail_service_1 = require("../service/master/subsccription.detail.service");
+let AuthService = class AuthService {
+    constructor(userService, languajeService, jwt, permit, appPermit, prisma, coupon, couponService, subscripitonDetail) {
+        this.userService = userService;
+        this.languajeService = languajeService;
+        this.jwt = jwt;
+        this.permit = permit;
+        this.appPermit = appPermit;
+        this.prisma = prisma;
+        this.coupon = coupon;
+        this.couponService = couponService;
+        this.subscripitonDetail = subscripitonDetail;
         this.lang = this.languajeService.GetTranslate();
     }
-
-    /**
-     * LOGIN
-     * 
-     */
-    public async login({ data }: { data: AuthLogin }) {
+    async login({ data }) {
         try {
-
             const userFoundPromise = await this.userService.find({ filter: { email: data.param } });
-            const userFound = userFoundPromise.body.data as User;
-
+            const userFound = userFoundPromise.body.data;
             const tokenPromise = this.jwt.signAsync({ id: userFound.id }, { privateKey: `api` });
-
-
             if (!userFound) {
                 return {
                     message: this.lang.ACTIONS.DANGER.LOGIN,
                     error: true,
                     errorMessage: `email.not.found`,
                     body: []
-                }
+                };
             }
-
             const compare = await this.userService.Compare({ password: data.password, dbPassword: userFound.password });
             if (!compare) {
                 return {
@@ -62,27 +52,21 @@ export default class AuthService {
                     error: true,
                     errorMessage: `password.not.match`,
                     body: []
-                }
+                };
             }
-
             userFound.token = await tokenPromise;
-
             const entity = {
                 user: userFound,
                 token: await tokenPromise
-            }
-
-            await this.userService.udpate({ id: userFound.id, data: { token: entity.token } })
-
-            // FIN
+            };
+            await this.userService.udpate({ id: userFound.id, data: { token: entity.token } });
             return {
                 message: this.lang.ACTIONS.SUCCESS.LOGIN,
                 error: false,
                 body: entity
             };
-        } catch (error) {
-            // log
-            // log error
+        }
+        catch (error) {
             return {
                 message: this.lang.ACTIONS.DANGER.LOGIN,
                 error: true,
@@ -91,14 +75,9 @@ export default class AuthService {
             };
         }
     }
-
-    /**
-     * REGISTRO
-     * 
-     */
-    public async register({ data }: { data: AuthRegister }) {
+    async register({ data }) {
         try {
-            const dataCreate: Prisma.UserCreateInput = {
+            const dataCreate = {
                 email: data.email,
                 password: data.password,
                 username: data.email.split(`@`)[0],
@@ -107,51 +86,38 @@ export default class AuthService {
                 lastname: data.lastname,
                 rolReference: { connect: { id: this.appPermit.USER_NUTRICIONISTA } },
                 propietaryCode: await this.userService.generateCode()
-            }
-
+            };
             const user = await this.userService.create({ data: dataCreate });
-
             if (data.ref) {
-                await this.couponService.CreateCoupon({ code: data.ref, description: this.coupon.NUTRICIONIST_CREATE_BY_CODE })
+                await this.couponService.CreateCoupon({ code: data.ref, description: this.coupon.NUTRICIONIST_CREATE_BY_CODE });
             }
-
             const dates = this.subscripitonDetail.GetDateFreeTrial();
-
-            const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } })
-	console.log(sub);
-            const dataSubscriptionDetail: Prisma.SubscriptionInUserCreateInput = {
+            const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } });
+            console.log(sub);
+            const dataSubscriptionDetail = {
                 active: true,
                 status: `FREE_TRIAL`,
-
                 subscriptionReference: {
                     connect: { id: sub.id }
                 },
-
                 userByReference: {
                     connect: { id: user.body.id }
                 },
-
                 dayEnd: dates.end.day,
                 monthEnd: dates.end.month,
                 yearEnd: dates.end.year,
-
                 dayStart: dates.start.day,
                 monthStart: dates.start.month,
                 yearStart: dates.start.year,
-
-            }
-
-            await this.subscripitonDetail.CreateSubscription({ data:dataSubscriptionDetail })
-
-            // FIN
+            };
+            await this.subscripitonDetail.CreateSubscription({ data: dataSubscriptionDetail });
             return {
                 message: this.lang.ACTIONS.SUCCESS.REGISTER,
                 error: false,
             };
-        } catch (error) {
-            // log
-            // log error
-		console.log(error);
+        }
+        catch (error) {
+            console.log(error);
             return {
                 message: this.lang.ACTIONS.DANGER.REGISTER,
                 error: true,
@@ -160,8 +126,7 @@ export default class AuthService {
             };
         }
     }
-
-    public formLogin(): FORM {
+    formLogin() {
         return {
             method: `POST`,
             name: `Inicio`,
@@ -178,10 +143,9 @@ export default class AuthService {
                     ico: `user`
                 }
             ]
-        }
+        };
     }
-
-    public formRegister(): FORM {
+    formRegister() {
         return {
             method: `POST`,
             name: `Registro`,
@@ -197,6 +161,20 @@ export default class AuthService {
                     required: true
                 }
             ]
-        }
+        };
     }
-}
+};
+AuthService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [user_service_1.default,
+        languaje_service_1.LanguajeService,
+        jwt_1.JwtService,
+        permit_service_1.default,
+        AppActions_1.default,
+        prisma_service_1.PrismaService,
+        AppCoupon_1.default,
+        coupon_service_1.default,
+        subsccription_detail_service_1.default])
+], AuthService);
+exports.default = AuthService;
+//# sourceMappingURL=auth.service.js.map

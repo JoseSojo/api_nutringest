@@ -7,8 +7,6 @@ import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
 import UserModel from "src/model/user.model";
 import HistoryService from "src/service/history.service";
-import PresentationService from "src/service/nutri/presentation.service";
-import QuoteService from "src/service/quote/quote.service";
 import UserService from "src/service/user.service";
 
 @Controller(`patient`)
@@ -118,6 +116,7 @@ export default class PatientController {
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit(user.rolReference.name).create;
 
+        const codePromise = this.service.generateCode();
         // validación de permisos
         const valid = permit.includes(action);
         if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
@@ -133,6 +132,7 @@ export default class PatientController {
             genero: body.genero === `MASCULINO` ? `M` : `F`,
             age: Number(body.age),
             code: code,
+            propietaryCode: await codePromise,
             parentReference: { connect: { id: user.id } },
             rolReference: { connect: { id: this.permit.USER_PACIENTE } }
         }

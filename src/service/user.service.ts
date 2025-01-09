@@ -301,11 +301,11 @@ export default class UserService {
     // WALLET
 
     public HeaderList(): string[] {
-        return [`Nombre`, `Apellido`, `Usuario`, `Correo`, `Permisos`]
+        return [`Nombre`, `Apellido`, `Usuario`, `Correo`, `Código`]
     }
 
     public HeaderListExtract(): string[] {
-        return [`name`, `lastname`, `username`, `email`, `rolReference.name`]
+        return [`name`, `lastname`, `username`, `email`, `propietaryCode`]
     }
 
     public HeaderUnique(): string[] {
@@ -511,6 +511,6 @@ export default class UserService {
     private getRandomCode(): string {
         // Generar un número aleatorio entre 0 y 9999999 y luego agregar ceros a la izquierda si es necesario.
         const randomNum = Math.floor(Math.random() * 10000000);
-        return randomNum.toString().padStart(7, '0');
+        return randomNum.toString().padStart(8, '0');
     }
 }

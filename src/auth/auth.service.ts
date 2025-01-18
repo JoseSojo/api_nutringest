@@ -118,7 +118,6 @@ export default class AuthService {
             const dates = this.subscripitonDetail.GetDateFreeTrial();
 
             const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } })
-	console.log(sub);
             const dataSubscriptionDetail: Prisma.SubscriptionInUserCreateInput = {
                 active: true,
                 status: `FREE_TRIAL`,
@@ -138,7 +137,6 @@ export default class AuthService {
                 dayStart: dates.start.day,
                 monthStart: dates.start.month,
                 yearStart: dates.start.year,
-
             }
 
             await this.subscripitonDetail.CreateSubscription({ data:dataSubscriptionDetail })
@@ -151,7 +149,6 @@ export default class AuthService {
         } catch (error) {
             // log
             // log error
-		console.log(error);
             return {
                 message: this.lang.ACTIONS.DANGER.REGISTER,
                 error: true,

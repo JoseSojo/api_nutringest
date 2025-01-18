@@ -134,7 +134,6 @@ export default class UserController {
             change = Number(mount);
         }
 
-        console.log(`Dolar: ${thisDollar}`, `Monto a aumentar: ${response.mount}`, `tasa de cambio bcv: ${change}`);
 
         if (query.status === `APROVADO`) {
             const findWallet = await this.wallet.findUser({ id: response.userId });

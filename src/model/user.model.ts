@@ -33,6 +33,7 @@ export default class UserModel {
         const result = this.prisma.user.findFirst({ 
             where: filter, 
             include: {
+                patientData: true,
                 cityReference: {
                     select: {
                         name: true,

@@ -25,6 +25,10 @@ model User {
   lastname2               String?
   nacionality             String?
 
+  edoCivil                String?
+  ocupacion               String?
+  fn                      DateTime?
+
   email2                   String?
   phone                    String?
   phone2                   String?
@@ -47,6 +51,7 @@ model User {
   createAt                DateTime            @default(now())
   updateAt                DateTime?           @updatedAt()      @default(now())
 
+  patientData             Patient?
 
   // # CITAS INICIO ()
 
@@ -107,6 +112,26 @@ model User {
   calendar                Calendar[]            @relation("create")
   calendarHistory         CalendarHistoryStatus[]            @relation("create")
   history                 History[]            @relation("create")
+}
+
+model Patient {
+  id                String          @id           @default(uuid())
+
+  userId            String          @unique
+  userReference     User            @relation(fields: [userId], references: [id])
+
+  heredofamiliares                    Json
+  personalesPatologicos               Json
+  personalesNPatologicos              Json
+  ginecoObstretricos                  Json
+  trastornosGastroinstestinales       Json
+  habitosAlimentacion                 Json
+  redordatorio24Horas                 Json
+  indicadorAntropometico              Json
+  indicadoresBioquimicos              Json
+  diagnostico                         String
+  sleep                               String
+  exercises                           String
 }
 
 // REFEWARS

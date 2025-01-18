@@ -47,12 +47,12 @@ export default class DashboardGuiController {
         if(permit.includes(this.permit.APP_PERMIT_EXCHANGE_LIST_LIST)) quote.push({ ico:`exchange`,label:`Listas de intercambio`,path:`/dashboard/exchange` });  
         if(permit.includes(this.permit.APP_PERMIT_FOOD_LIST)) quote.push({ ico:`food`,label:`Alimentos`,path:`/dashboard/food` });  
         if(permit.includes(this.permit.APP_PERMIT_MENU_LIST)) quote.push({ ico:`menu`,label:`Menus`,path:`/dashboard/menu` });  
-        if(permit.includes(this.permit.APP_PERMIT_QUOTE_LIST)) quote.push({ ico:`quote`,label:`Citas`,path:`/dashboard/quote` });  
+        if(permit.includes(this.permit.APP_PERMIT_QUOTE_LIST)) quote.push({ ico:`quote`,label:`Consultas`,path:`/dashboard/quote` });  
         
         // PROPIETARIOS
         if(permit.includes(this.permit.APP_PERMIT_PROPIETARY_EXCHANGE_LIST_LIST)) propietary.push({ ico:`exchange`,label:`Mis listas de intercambio`,path:`/dashboard/exchange` });  
         if(permit.includes(this.permit.APP_PERMIT_PROPIETARY_MENU_LIST)) propietary.push({ ico:`menu`,label:`Mis menús`,path:`/dashboard/menu` });  
-        if(permit.includes(this.permit.APP_PERMIT_PROPIETARY_QUOTE)) propietary.push({ ico:`quote`,label:`Mis citas`,path:`/dashboard/quote` });  
+        if(permit.includes(this.permit.APP_PERMIT_PROPIETARY_QUOTE)) propietary.push({ ico:`quote`,label:`Mis consultas`,path:`/dashboard/quote` });  
         if(permit.includes(this.permit.APP_PERMIT_PROPIETARY_PATIENT)) propietary.push({ ico:`users`,label:`Mis pacientes`,path:`/dashboard/patient` });  
         if(permit.includes(this.permit.APP_PERMIT_PROPIETARY_NUTRICIONIST)) propietary.push({ ico:`nutricionist`,label:`Mis nutricionistas`,path:`/dashboard/nutricionist` });  
         if(permit.includes(this.permit.APP_PERMIT_FOOD_LIST) && propietary.length > 0) propietary.push({ ico:`primitive`,label:`Alimentos`,path:`/dashboard/primitive` });  
@@ -64,9 +64,9 @@ export default class DashboardGuiController {
 
         const customAction: Sidebar[] = propietary.length > 0 ? propietary :actions ;
 
-        customAction.unshift({ ico:`agend`,label:`Agenda`,path:`/calendar/` });
-        customAction.unshift({ ico:`dashboard`,label:`Dashboard`,path:`/dashboard/` });
+        // customAction.unshift({ ico:`agend`,label:`Agenda`,path:`/calendar/` });
         customAction.unshift({ ico:`finanza`,label:`Finanzas`,path:`/finanzas/` });
+        customAction.unshift({ ico:`dashboard`,label:`Inicio`,path:`/dashboard/` });
         return {
             sidebar: customAction
         }

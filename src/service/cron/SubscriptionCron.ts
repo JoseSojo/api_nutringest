@@ -486,7 +486,6 @@ export default class SubscriptionCron {
                     }
                 }
             });
-            console.log(error);
         }
 
 

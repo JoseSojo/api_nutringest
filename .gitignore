@@ -2,3 +2,8 @@ dist
 node_modules
 .env
 public/projects/*
+public/quote/history/*jpg
+public/quote/history/*png
+public/quote/history/*jpeg
+public/quote/history/*gif
+public/quote/history/*webp

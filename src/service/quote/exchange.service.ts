@@ -153,11 +153,11 @@ export default class ExchangeListService {
     }
 
     public HeaderList (): string[] {
-        return [`Nombre`,`Unidad de medida`,`Contabilidad alimentos`,`Contabilidad citas`,`Creador`]
+        return [`Nombre`,`Contabilidad alimentos`,`Contabilidad citas`,`Creador`]
     }
 
     public HeaderListExtract (): string[] {
-        return [`name`,`unityReference.name`,`_count.foods`,`_count.exchange`,`userReference.email`]
+        return [`name`,`_count.foods`,`_count.exchange`,`userReference.email`]
     }
 
     public HeaderMinList (): string[] {

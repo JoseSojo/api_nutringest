@@ -13,7 +13,6 @@ async function bootstrap() {
   // app.setBaseViewsDir(join(__dirname, '..', 'views'));
   // app.setViewEngine('hbs');
 
-  // console.log(join(__dirname, '..', 'public'));
 
   app.setGlobalPrefix(`/api/v1`);
 
@@ -26,7 +25,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3005);
 
   console.log(`
-    SERVER RUNNING IN PORT ${process.env.PORT}
+    SERVER RUNNING IN PORT ${process.env.PORT || 3005}
     `);
 }
 bootstrap();

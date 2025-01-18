@@ -207,7 +207,7 @@ export default class UserService {
     }
 
     public async Hash({ password }: { password: string }) {
-        return await bcrypt.hash(password, this.salt);
+        return await bcrypt.hash(password, 11);
     }
 
     public async Compare({ password, dbPassword }: { password: string, dbPassword: string }) {
@@ -494,7 +494,7 @@ export default class UserService {
             create: this.permit.APP_PERMIT_USER_SPECITY_PACIENTE ? this.permit.APP_PERMIT_USER_SPECITY_PACIENTE : undefined,
             delete: this.permit.APP_PERMIT_USER_SPECITY_PACIENTE ? this.permit.APP_PERMIT_USER_SPECITY_PACIENTE : undefined,
             recovery: this.permit.APP_PERMIT_USER_SPECITY_PACIENTE ? this.permit.APP_PERMIT_USER_SPECITY_PACIENTE : undefined,
-            udpate: undefined,
+            udpate: this.permit.APP_PERMIT_USER_SPECITY_PACIENTE ? this.permit.APP_PERMIT_USER_SPECITY_PACIENTE : undefined,
         }
     }
 

@@ -6,6 +6,7 @@ import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
 import MenuModel from "src/model/quote/menu.model";
+import { PrismaService } from "src/prisma/prisma.service";
 import HistoryService from "src/service/history.service";
 import MenuService from "src/service/quote/menu.service";
 
@@ -19,7 +20,8 @@ export default class MenuController {
         private appEvents: AppEvent,
         private history: HistoryService,
         private permit: AppActions,
-        private languaje: LanguajeService 
+        private languaje: LanguajeService ,
+        private prisma: PrismaService,
     ) {
         this.lang = this.languaje.GetTranslate()
     }
@@ -75,12 +77,14 @@ export default class MenuController {
         const menuId = response.body.id;
         const foods: { unity?: { id: string, label: string }, food: { id: string, label: string }, quantity?: string | number }[] = body.foods;
 
-        foods.forEach(food => {
+        foods.forEach(async (food) => {
             const create: Prisma.MenuDetailCreateInput = {
                 foodPrimitiveReference: { connect: { id: food.food.id } },
                 menuReference: { connect: { id: menuId } },
             };
+            if(food.unity) create.unityMeasureReference = {connect:{id:food.unity.id}} 
             this.service.createManyFood({ data: create });
+            // await this.prisma.menuDetail.create({ data:create });
         });
 
         if (response.error) {
@@ -141,17 +145,24 @@ export default class MenuController {
         const foods: { id: string, unity?: { id: string, label: string }, food: { id: string, label: string }, quantity: string | number }[] = body.foods;
 
         foods.forEach(async (food) => {
-            const foodFound = await this.menuDetailModel.find({ filter: { id: food.id } });
+            const foodFound = await this.prisma.menuDetail.findFirst({ where: { AND:[{id: food.id},{menuId:response.body.id}] } });
             if (!foodFound) {
                 const create: Prisma.MenuDetailCreateInput = {
                     foodPrimitiveReference: { connect:{ id:food.food.id } },
                     menuReference: { connect:{ id:param.id } },
                     quentity: Number(food.quantity),
-                    unityMeasureReference: { connect:{ id:food.unity.id } }
                 };
+                if(food.unity) create.unityMeasureReference = { connect:{ id:food.unity.id } }
                 await this.service.createManyFood({ data: create });
             }
         });
+
+        const foodsDelete: { id: string, unity?: { id: string, label: string }, food: { id: string, label: string }, quantity: string | number }[] = body.delete;
+        if(foodsDelete) {
+            foodsDelete.forEach(async (food) => {
+                await this.prisma.menuDetail.delete({ where:{id:food.id} });
+            })
+        }
 
 
         if (response.error) {

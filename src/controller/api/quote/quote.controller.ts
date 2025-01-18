@@ -69,7 +69,7 @@ export default class QuoteController {
         await this.service.createPhotoHistory({ data, quote:param.id });
 
         return {
-            message: `upload success`,
+            message: `Foto guardada`,
             error: false,
             body: {}
         }
@@ -94,7 +94,7 @@ export default class QuoteController {
         const result = await this.service.removeExchange({ id:query.item,quote:query.quote });
 
         return {
-            message: `Exchange assing success (controller)`,
+            message: `Lista de intercambio removida`,
             error: false,
             body: result
         }
@@ -119,7 +119,7 @@ export default class QuoteController {
         const result = await this.service.removeMenu({ id:query.item,quote:query.quote });
 
         return {
-            message: `Menú assing success (controller)`,
+            message: `Menú removido`,
             error: false,
             body: result
         }
@@ -144,7 +144,7 @@ export default class QuoteController {
         const result = await this.service.removeFood({ id:query.item,quote:query.quote });
 
         return {
-            message: `Exchange assing success (controller)`,
+            message: `Alimento removido`,
             error: false,
             body: result
         }
@@ -169,7 +169,7 @@ export default class QuoteController {
         const result = await this.service.assingExchange(query);
 
         return {
-            message: `Exchange assing success (controller)`,
+            message: `Lista de intercambio asignada`,
             error: false,
             body: result
         }
@@ -194,7 +194,7 @@ export default class QuoteController {
         const result = await this.service.assingMenu(query);
 
         return {
-            message: `Menú assing success (controller)`,
+            message: `Menú Asignado`,
             error: false,
             body: result
         }
@@ -219,7 +219,7 @@ export default class QuoteController {
         const result = await this.service.assingFood(query);
 
         return {
-            message: `Exchange assing success (controller)`,
+            message: `Alimento asignado`,
             error: false,
             body: result
         }
@@ -387,19 +387,8 @@ export default class QuoteController {
 
         // validación de datos
         const skip = query.skip ? Number(query.skip) : 0;
-        const take = query.take ? Number(query.take) : 10;
-        const customFilter: Prisma.HistoryPhotoWhereInput[] = [];
-
-        // lógica
-        // if (query.param) customFilter.push({ name: { contains: query.param } });
-        customFilter.push({ quoteId:query.id });
-
-        // validar eliminación
-        const filter: Prisma.HistoryPhotoWhereInput = { AND: customFilter };
-
-        const responsePromise = this.service.PaginatePhoto({ skip, take, filter });
-
-        // LOG
+        const take = 5;
+        const responsePromise = this.service.PaginatePhoto({ skip, take, filter:{quoteId:query.id} });
 
         const response = await responsePromise;
 
@@ -663,12 +652,12 @@ export default class QuoteController {
             // { label:`Detalles`,value:`DETAILS` },
             { label:`Fotos`,value:`PHOTO` },
         ];
-        if(rol === this.permit.USER_NUTRICIONISTA || rol === this.permit.USER_NUTRI_ADMIN) {
+        if(rol === this.permit.USER_NUTRI_ADMIN) {
             sections.push({ label:`Historial`,value:`HISTORY` });
-            sections.push({ label:`Detalles`,value:`DETAILS` });
+            sections.push({ label:`Paciente`,value:`PATIENT` });
         }
         if(rol === this.permit.USER_NUTRICIONISTA) {
-            sections.push({ label:`Recomendaciones`,value:`UPDATE` });
+            sections.push({ label:`Paciente`,value:`PATIENT` });
         }
 
 

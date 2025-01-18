@@ -6,6 +6,7 @@ import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
 import ExchangeListFoodModel from "src/model/quote/exchange.food.model";
+import { PrismaService } from "src/prisma/prisma.service";
 import HistoryService from "src/service/history.service";
 import PrimitiveFoodService from "src/service/nutri/food.service";
 import ExchangeListService from "src/service/quote/exchange.service";
@@ -20,7 +21,8 @@ export default class ExchangeListController {
         private appEvents: AppEvent,
         private history: HistoryService,
         private permit: AppActions,
-        private languaje: LanguajeService 
+        private languaje: LanguajeService,
+        private prisma: PrismaService,
     ) {
         this.lang = this.languaje.GetTranslate()
     }
@@ -203,9 +205,6 @@ export default class ExchangeListController {
         let data: Prisma.ExchangeListUpdateInput = {
             name: body.name
         }
-        if (body.ration) data = { ...data, ration: body.ration.toString() };
-        if (body.unity) data = { ...data, unityReference: { connect: { id: body.unity.id } } };
-
 
         const responsePromise = this.service.udpate({ data, id: param.id });
 
@@ -222,8 +221,7 @@ export default class ExchangeListController {
 
         // create foods
         // const exchangeId = response.body.id;
-        const foods: { id: string, unity?: { id: string, label: string }, food: { id: string, label: string }, ration?: string | number }[] = body.foods;
-
+        const foods: { id: string, food: { id: string, label: string }}[] = body.foods;
         foods.forEach(async (food) => {
             const foodFound = await this.exchangeListFoodModel.find({ filter: { id: food.id } });
             if (!foodFound) {
@@ -231,12 +229,22 @@ export default class ExchangeListController {
                     exchangeListReference: { connect: { id: param.id } },
                     foodReference: { connect: { id: food.food.id } },
                 };
-                if (food.unity) create.unityMeasureReference = { connect: { id: food.unity.id } };
-                if (food.ration) create.ration = food.ration.toString();
                 // this.service.udpateFood({ data: create, id:param.id });
                 await this.service.createManyFood({ data: create });
-            }
+            } 
         });
+
+        // eliminar alimentos que no estén
+        const deleteFood: { id: string, food: { id: string, label: string }}[] = body.delete;
+        if(deleteFood) {
+            deleteFood.forEach(async (food) => {
+                await this.prisma.exchangeListFoods.delete({ where:{ id:food.id } });
+            })
+        }
+        // Busca alimentos que no esten en la actualización
+        // await this.prisma.exchangeListFoods.deleteMany({
+        //     where: 
+        // })
 
         if (response.error) {
             return {

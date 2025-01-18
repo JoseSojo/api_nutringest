@@ -39,7 +39,7 @@ export default class CouponService {
         await this.prisma.coupons.create({ 
             data: { 
                 description,
-                mount: 2,
+                mount: 5,
                 propietaryReference: { connect:{id:userFound.id} },
             } 
         })

@@ -6,7 +6,9 @@ import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
 import UserModel from "src/model/user.model";
+import { PrismaService } from "src/prisma/prisma.service";
 import HistoryService from "src/service/history.service";
+import QuoteService from "src/service/quote/quote.service";
 import UserService from "src/service/user.service";
 
 @Controller(`patient`)
@@ -19,7 +21,9 @@ export default class PatientController {
         private permit: AppActions,
         private appEvents: AppEvent,
         private history: HistoryService,
-        private languaje: LanguajeService, 
+        private languaje: LanguajeService,
+        private prisma: PrismaService,
+        private quote: QuoteService,
     ) {
         this.lang = this.languaje.GetTranslate()
     }
@@ -40,7 +44,7 @@ export default class PatientController {
         const take = query.take ? Number(query.take) : 10;
         const customFilter: Prisma.UserWhereInput[] = [];
 
-        customFilter.push({ rolId:this.permit.USER_PACIENTE });
+        customFilter.push({ rolId: this.permit.USER_PACIENTE });
         customFilter.push({ parentId: user.id });
         customFilter.push({ isDelete: undefined });
         customFilter.push({ isDelete: false });
@@ -87,7 +91,7 @@ export default class PatientController {
         if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
 
         // validar eliminación
-        const filter: Prisma.UserWhereInput = { id:param.id };
+        const filter: Prisma.UserWhereInput = { id: param.id };
 
         const responsePromise = this.service.find({ filter });
 
@@ -112,59 +116,113 @@ export default class PatientController {
     @Post(`create`)
     @UseGuards(AuthGuard)
     private async create(@Req() req: any, @Body() body: any) {
-        const user = req.user as any;
-        const permit = user.rolReference.roles as string[];
-        const action = this.getPermit(user.rolReference.name).create;
+        try {
+            const user = req.user as any;
+            const permit = user.rolReference.roles as string[];
+            const action = this.getPermit(user.rolReference.name).create;
 
-        const codePromise = this.service.generateCode();
-        // validación de permisos
-        const valid = permit.includes(action);
-        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+            const codePromise = this.service.generateCode();
+            // validación de permisos
+            const valid = permit.includes(action);
+            if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
 
-        let code = user.propietaryCode;
+            let code = user.propietaryCode;
 
-        const data: Prisma.UserCreateInput = {
-            username: body.username,
-            email: body.email,
-            password: body.password,
-            name: body.name,
-            lastname: body.lastname,    
-            genero: body.genero === `MASCULINO` ? `M` : `F`,
-            age: Number(body.age),
-            code: code,
-            propietaryCode: await codePromise,
-            parentReference: { connect: { id: user.id } },
-            rolReference: { connect: { id: this.permit.USER_PACIENTE } }
-        }
+            const data: Prisma.UserCreateInput = {
+                username: body.email.split(`@`)[0],
+                email: body.email,
+                password: body.email,
+                name: body.name,
+                lastname: body.lastname,
+                genero: body.genero,
+                age: Number(body.age),
+                code: code,
+                phone: body.phone,
+                ocupacion: body.ocupacion,
+                edoCivil: body.edoCivil,
+                fn: new Date(body.birtdate),
 
-        // validar subscripción
-        // validar ciudad
+                propietaryCode: await codePromise,
+                parentReference: { connect: { id: user.id } },
+                rolReference: { connect: { id: this.permit.USER_PACIENTE } }
+            }
 
-        const responsePromise = this.service.create({ data });
+            // validar subscripción
+            // validar ciudad
 
-        // LOG
+            const responsePromise = this.service.create({ data });
+            // LOG
 
-        const response = await responsePromise;
+            const response = await responsePromise;
 
-        if (response.error) {
+            if (response.error) {
+                return {
+                    message: response.message,
+                    error: response.error
+                }
+            }
+
+            /**
+             * Struct { label:string, value:string }
+             */
+
+            const heredofamiliares = body.heredofamiliares ? body.heredofamiliares : [] as any;
+            const personalesPatologicos = body.personalesPatologicos ? body.personalesPatologicos : [] as any;
+            const personalesNPatologicos = body.personalesNoPatologicos ? body.personalesNoPatologicos : [] as any;
+            const ginecoObstretricos = body.ginecoObstretricos ? body.ginecoObstretricos : [] as any;
+            const trastornosGastroinstestinales = body.trastornosGastroinstestinales ? body.trastornosGastroinstestinales : [] as any;
+            const habitosAlimentacion = body.habitosAlimentacion ? body.habitosAlimentacion : [] as any;
+            const redordatorio24Horas = body.redordatorio24Horas ? body.redordatorio24Horas : [] as any;
+            const indicadorAntropometico = body.indicadorAntropometico ? body.indicadorAntropometico : [] as any;
+            const indicadoresBioquimicos = body.indicadoresBioquimicos ? body.indicadoresBioquimicos : [] as any;
+
+            const patientData: Prisma.PatientCreateInput = {
+                sleep: body.recomendaciones.sleep,
+                exercises: body.recomendaciones.exercies,
+                diagnostico: body.recomendaciones.diagnostico,
+                heredofamiliares: Object.entries(heredofamiliares),
+                ginecoObstretricos: Object.entries(ginecoObstretricos),
+                habitosAlimentacion: Object.entries(habitosAlimentacion),
+                indicadorAntropometico: Object.entries(indicadorAntropometico),
+                indicadoresBioquimicos: Object.entries(indicadoresBioquimicos),
+                personalesNPatologicos: Object.entries(personalesNPatologicos),
+                personalesPatologicos: Object.entries(personalesPatologicos),
+                redordatorio24Horas: Object.entries(redordatorio24Horas),
+                trastornosGastroinstestinales: Object.entries(trastornosGastroinstestinales),
+                userReference: { connect: { id: response.body.id } }
+            }
+
+            await this.prisma.patient.create({ data: patientData });
+
+            await this.quote.create({
+                data: {
+                    nutricionistReference: { connect: { id: user.id } },
+                    patientReference: { connect: { id: response.body.id } },
+                    sleep: body.recomendaciones.sleep,
+                    exercise: body.recomendaciones.exercies,
+                    description: body.recomendaciones.diagnostico
+                }
+            })
+
+            await this.history.create({
+                // userId:user.id,
+                userReference: { connect: { id: user.id } },
+                eventName: this.appEvents.EVENT_QUOTE_PATIENT_CREATE,
+                objectName: this.objectName(),
+                objectReferenceId: response.body.id
+            });
+
             return {
                 message: response.message,
-                error: response.error
+                error: response.error,
+                body: response
             }
-        }
-
-        await this.history.create({ 
-            // userId:user.id,
-            userReference:{connect:{id:user.id}},
-            eventName:this.appEvents.EVENT_QUOTE_PATIENT_CREATE,
-            objectName:this.objectName(), 
-            objectReferenceId: response.body.id
-        });
-
-        return {
-            message: response.message,
-            error: response.error,
-            body: response
+        } catch (error) {
+            return {
+                message: `Error al crear paciente`,
+                error: true
+            }
+            
         }
     }
 
@@ -175,7 +233,6 @@ export default class PatientController {
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit(user.rolReference.name).udpate;
 
-
         // validación de permisos
         const valid = permit.includes(action);
         if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
@@ -184,20 +241,20 @@ export default class PatientController {
 
         const data: Prisma.UserUpdateInput = {}
 
-        if(body.name) data.name = body.name;
-        if(body.lastname) data.lastname = body.lastname;
-        if(body.username) data.username = body.username;
-        if(body.email) data.email = body.email;
-        if(body.genero) data.genero = body.genero;
+        if (body.name) data.name = body.name;
+        if (body.lastname) data.lastname = body.lastname;
+        if (body.username) data.username = body.username;
+        if (body.email) data.email = body.email;
+        if (body.genero) data.genero = body.genero;
 
         const responsePromise = this.service.udpate({ data, id: param.id });
 
         // LOG
-        await this.history.create({ 
+        await this.history.create({
             // userId:user.id,
-            userReference:{connect:{id:user.id}},
-            eventName:this.appEvents.EVENT_QUOTE_PATIENT_UPDATE,
-            objectName:this.objectName(), 
+            userReference: { connect: { id: user.id } },
+            eventName: this.appEvents.EVENT_QUOTE_PATIENT_UPDATE,
+            objectName: this.objectName(),
             objectReferenceId: param.id
         });
 
@@ -208,6 +265,38 @@ export default class PatientController {
                 message: response.message,
                 error: response.error
             }
+        }
+
+        // obtener id de paciente
+        const find = await this.prisma.patient.findFirst({ where:{ userId:param.id } });
+        if(find) {
+            const heredofamiliares = body.heredofamiliares ? body.heredofamiliares : [] as any;
+            const personalesPatologicos = body.personalesPatologicos ? body.personalesPatologicos : [] as any;
+            const personalesNPatologicos = body.personalesNoPatologicos ? body.personalesNoPatologicos : [] as any;
+            const ginecoObstretricos = body.ginecoObstretricos ? body.ginecoObstretricos : [] as any;
+            const trastornosGastroinstestinales = body.trastornosGastroinstestinales ? body.trastornosGastroinstestinales : [] as any;
+            const habitosAlimentacion = body.habitosAlimentacion ? body.habitosAlimentacion : [] as any;
+            const redordatorio24Horas = body.redordatorio24Horas ? body.redordatorio24Horas : [] as any;
+            const indicadorAntropometico = body.indicadorAntropometico ? body.indicadorAntropometico : [] as any;
+            const indicadoresBioquimicos = body.indicadoresBioquimicos ? body.indicadoresBioquimicos : [] as any;
+
+            const patientData: Prisma.PatientCreateInput = {
+                sleep: body.recomendaciones.sleep,
+                exercises: body.recomendaciones.exercies,
+                diagnostico: body.recomendaciones.diagnostico,
+                heredofamiliares: Object.entries(heredofamiliares),
+                ginecoObstretricos: Object.entries(ginecoObstretricos),
+                habitosAlimentacion: Object.entries(habitosAlimentacion),
+                indicadorAntropometico: Object.entries(indicadorAntropometico),
+                indicadoresBioquimicos: Object.entries(indicadoresBioquimicos),
+                personalesNPatologicos: Object.entries(personalesNPatologicos),
+                personalesPatologicos: Object.entries(personalesPatologicos),
+                redordatorio24Horas: Object.entries(redordatorio24Horas),
+                trastornosGastroinstestinales: Object.entries(trastornosGastroinstestinales),
+                userReference: { connect: { id: response.body.id } }
+            }
+
+            await this.prisma.patient.update({ data: patientData, where:{id:find.id} });
         }
 
         return {
@@ -232,14 +321,14 @@ export default class PatientController {
         // validación si es super admin
 
 
-        const responsePromise = this.service.delete({ id:param.id });
+        const responsePromise = this.service.delete({ id: param.id });
 
         // LOG
-        await this.history.create({ 
+        await this.history.create({
             // userId:user.id,
-            userReference:{connect:{id:user.id}},
-            eventName:this.appEvents.EVENT_QUOTE_PATIENT_DELETE,
-            objectName:this.objectName(), 
+            userReference: { connect: { id: user.id } },
+            eventName: this.appEvents.EVENT_QUOTE_PATIENT_DELETE,
+            objectName: this.objectName(),
             objectReferenceId: param.id
         });
 
@@ -294,10 +383,11 @@ export default class PatientController {
     private getPermit(rol: string) {
         let response: any;
 
-        if(rol === this.permit.USER_NUTRICIONISTA) {
+
+        if (rol === this.permit.USER_NUTRICIONISTA) {
             response = this.service.getPermitsNutricionist();
         }
-        else if(rol === this.permit.USER_PACIENTE) {
+        else if (rol === this.permit.USER_PACIENTE) {
             response = this.service.getPermitsPaciente();
         }
         else {

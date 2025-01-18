@@ -262,7 +262,7 @@ export default class QuoteService {
 
 
         if (actions.includes(permit.list) || actions.includes(propietary.list)) customActions.push({ ico: `list`, label: `Lista`, path: `/dashboard/quote`, use: `page` });
-        if (actions.includes(permit.create)) customActions.push({ ico: `create`, label: `Crear`, path: `/dashboard/quote/create`, use: `page` });
+        if (actions.includes(permit.create) || actions.includes(propietary.create)) customActions.push({ ico: `create`, label: `Crear`, path: `/dashboard/quote/create`, use: `page` });
         // if(actions.includes(permit.list)) customActions.push({ ico:`list`,label:`Lista`, path:`/user`, use:`page` });
 
         return customActions;
@@ -345,12 +345,11 @@ export default class QuoteService {
     }
 
     // PHOTO
-
     public async createPhotoHistory({data,quote}: { data:Prisma.HistoryPhotoCreateInput,quote:string }) {
         const resultPromise = this.prisma.historyPhoto.create({ 
             data
         });
-        await this.CreateHistory({ quoteReference:{ connect:{id:quote} }, description:this.events.EVENT_ASSING_FOOD_UPDATE });
+        await this.CreateHistory({ quoteReference:{ connect:{id:quote} }, description:this.events.EVENT_ADD_PHOTO_UPDATE });
         return await resultPromise;
 
     }

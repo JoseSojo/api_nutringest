@@ -9,7 +9,7 @@ export default class CardGuiController {
     constructor(
         private guiService: GuiService,
         private permit: AppActions,
-    ) { }
+    ) {}
 
     @Get(``)
     @UseGuards(AuthGuard)

@@ -512,15 +512,15 @@ export default class FixtureCreate {
             return;
         }
 
-        const stone = await this.unityModel.find({ filter: { name: `STONE` } });
-        const iron = await this.unityModel.find({ filter: { name: `IRON` } });
-        const diamon = await this.unityModel.find({ filter: { name: `DIAMON` } });
         const gold = await this.unityModel.find({ filter: { name: `GOLD` } });
+        // const iron = await this.unityModel.find({ filter: { name: `IRON` } });
+        // const diamon = await this.unityModel.find({ filter: { name: `DIAMON` } });
+        // const gold = await this.unityModel.find({ filter: { name: `GOLD` } });
 
-        if(!stone) await this.subscriptionModel.create({ data:{name: `STONE`,countMonth:1,defaultMount:39.99,createByReference:{connect:{id:user.id}}} });
-        if(!iron) await this.subscriptionModel.create({ data:{name: `IRON`,countMonth:3,defaultMount:29.99,createByReference:{connect:{id:user.id}}} });
-        if(!diamon) await this.subscriptionModel.create({ data:{name: `DIAMON`,countMonth:6,defaultMount:24.99,createByReference:{connect:{id:user.id}}} });
-        if(!gold) await this.subscriptionModel.create({ data:{name: `GOLD`,countMonth:12,defaultMount:20,createByReference:{connect:{id:user.id}}} });
+        // if(!stone) await this.subscriptionModel.create({ data:{name: `STONE`,countMonth:1,defaultMount:39.99,createByReference:{connect:{id:user.id}}} });
+        // if(!iron) await this.subscriptionModel.create({ data:{name: `IRON`,countMonth:3,defaultMount:29.99,createByReference:{connect:{id:user.id}}} });
+        // if(!diamon) await this.subscriptionModel.create({ data:{name: `DIAMON`,countMonth:6,defaultMount:24.99,createByReference:{connect:{id:user.id}}} });
+        if(!gold) await this.subscriptionModel.create({ data:{name: `GOLD`,countMonth:1,defaultMount:24.99,createByReference:{connect:{id:user.id}}} });
 
         return {};
     }

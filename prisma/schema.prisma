@@ -250,8 +250,8 @@ model SubscriptionDetail {
   subscriptionId                  String
   subscriptionReference           Subscription      @relation(fields: [subscriptionId], references: [id])
 
-  createById              String?
-  createByReference       User?                     @relation("create", fields: [createById], references: [id])
+  createById                      String?
+  createByReference               User?                     @relation("create", fields: [createById], references: [id])
 
   isDelete                        Boolean           @default(false)
   createAt                        DateTime          @default(now())
@@ -281,8 +281,7 @@ model PaymentFinance {
 
   status              String            @default("EN ESPERA")
   date                String?
-
-  mount               Int
+  mount               Decimal
 
   userId              String
   userReference       User              @relation(fields: [userId], references: [id])

@@ -22,7 +22,21 @@ export default class UserModel {
             where: filter, 
             include: {
                 _count: true,
-                rolReference: true
+                rolReference: true,
+                wallet: true,
+                subscriptionDetail: true,
+                subscriptionReference: {
+                    select: {
+                        status: true,
+                        active: true,
+                        dayStart: true,
+                        dayEnd: true,
+                        monthStart: true,
+                        monthEnd: true,
+                        yearStart: true,
+                        yearEnd: true,
+                    }
+                }
             }
         });
 

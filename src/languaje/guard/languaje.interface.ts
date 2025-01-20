@@ -26,6 +26,7 @@ interface ACTIONS_INTERFACE {
         RECOVERY:   string;
         LOGIN:      string;
         REGISTER:   string;
+        ACTIVE:     string
     };
 
     DANGER: {
@@ -37,6 +38,7 @@ interface ACTIONS_INTERFACE {
         RECOVERY:   string;
         LOGIN:      string;
         REGISTER:   string;
+        ACTIVE:     string;
 
         VALIDATIONS: {
             USERNAME_IN_USE:        string; 

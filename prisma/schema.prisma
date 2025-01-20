@@ -130,8 +130,8 @@ model Patient {
   indicadorAntropometico              Json
   indicadoresBioquimicos              Json
   diagnostico                         String
-  sleep                               String
-  exercises                           String
+  sleep                               String?
+  exercises                           String?
 }
 
 // REFEWARS

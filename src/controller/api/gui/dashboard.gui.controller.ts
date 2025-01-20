@@ -36,6 +36,7 @@ export default class DashboardGuiController {
         if(permit.includes(this.permit.APP_PERMIT_CITY_LIST)) master.push({ ico:`city`,label:`Ciudades`,path:`/dashboard/city` });  
         if(permit.includes(this.permit.APP_PERMIT_PAYMENT_METHOD_LIST)) master.push({ ico:`payment`,label:`Métodos Pago`,path:`/dashboard/payment` });  
         if(permit.includes(this.permit.APP_PERMIT_SUBSCRIPTION_LIST)) master.push({ ico:`subscription`,label:`Subscripciones`,path:`/dashboard/subscription` });  
+        if(permit.includes(this.permit.APP_PERMIT_SUBSCRIPTION_LIST)) master.push({ ico:`users`,label:`Vencimientos`,path:`/dashboard/expiration` });  
         
         // NUTRI
         if(permit.includes(this.permit.APP_PERMIT_FOOD_LIST)) nutri.push({ ico:`primitive`,label:`Alimentos`,path:`/dashboard/primitive` });  

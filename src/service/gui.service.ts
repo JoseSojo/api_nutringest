@@ -189,11 +189,11 @@ export default class GuiService {
             }
         });
 
-        const paymentAprovadoPromise = this.prisma.paymentFinance.count({ 
+        const paymentAprobadoPromise = this.prisma.paymentFinance.count({ 
             where: {
                 AND: [
                     { userReference:{id:userId} },
-                    { status:`APROVADO` }
+                    { status:`APROBADO` }
                 ]
             }
         });
@@ -209,15 +209,15 @@ export default class GuiService {
 
         // saldo actual
         const wallet = await walletPromise;
-        currentCards.push({ ico:`wallet`, label:`Billetera`,value:wallet ? wallet.mount.toString() : 0 })
+        currentCards.push({ ico:`wallet`, label:`BILLETERA`,value:wallet ? wallet.mount.toString() : 0 })
 
         // total de pagos
         const all = await paymentAllPromise;
-        currentCards.push({ ico:`all`, label:`Pagos totales`,value:all ? all.toString() : 0 })
+        currentCards.push({ ico:`all`, label:`PAGOS TOTALES`,value:all ? all.toString() : 0 })
         
         // pagos aporbados
-        const aprovado = await paymentAprovadoPromise;
-        currentCards.push({ ico:`aprovado`, label:`APROVADOS`,value:aprovado ? aprovado.toString() : 0 })
+        const aprobado = await paymentAprobadoPromise;
+        currentCards.push({ ico:`aprobado`, label:`APROBADOS`,value:aprobado ? aprobado.toString() : 0 })
 
 
         // pagos rechazados

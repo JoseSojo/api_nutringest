@@ -117,7 +117,7 @@ export default class AuthService {
 
             const dates = this.subscripitonDetail.GetDateFreeTrial();
 
-            const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } })
+            const sub = await this.prisma.subscription.findFirst({ where: {} })
             const dataSubscriptionDetail: Prisma.SubscriptionInUserCreateInput = {
                 active: true,
                 status: `FREE_TRIAL`,

@@ -21,6 +21,7 @@ export class LanguajeService {
                     UPDATE: `Error al actualizar.`,
                     LOGIN: `Error al iniciar sesión.`,
                     REGISTER: `Error al crear una cuenta.`,
+                    ACTIVE: `Error al activar.`,
 
                     VALIDATIONS: {
                         EMAIL_IN_USE: `Error, correo en uso.`,
@@ -36,7 +37,8 @@ export class LanguajeService {
                     SHOW: `Busqueda exitosa.`,
                     UPDATE: `Actualización exitosa.`,
                     LOGIN: `Inicio de sesión exitoso.`,
-                    REGISTER: `Registro exitoso`
+                    REGISTER: `Registro exitoso`,
+                    ACTIVE: `Error al activar`,
                 },
                 NOT_FOUND: `No encontrado.`,
                 NOT_PERMIT: `No permitido.`,

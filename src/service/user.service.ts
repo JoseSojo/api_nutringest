@@ -244,7 +244,7 @@ export default class UserService {
             }
         });
 
-        if(status === `APROVADO`) {
+        if(status === `APROBADO`) {
 
         }
 

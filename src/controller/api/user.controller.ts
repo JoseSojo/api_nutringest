@@ -27,9 +27,370 @@ export default class UserController {
         private languaje: LanguajeService,
         private wallet: WalletService,
         private subscripitonDetail: ConfigSubscriptionHandlerService,
-        private prisma: PrismaService
+        private prisma: PrismaService,
     ) {
         this.lang = this.languaje.GetTranslate()
+    }
+
+    @Put(`/subsctiption/active/:id`)
+    @UseGuards(AuthGuard)
+    private async activeSubscription(@Req() req: any, @Param() param: {id:string}) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        const customSubscription = await this.prisma.subscriptionInUser.findFirst({ where:{id:param.id}, include:{userByReference: {include:{wallet: true}}} });
+        if(!customSubscription) return { error:true, message: this.lang.ACTIONS.DANGER.UPDATE }
+
+        const nextMonth = this.subscripitonDetail.GetDateSubscription1Month();
+
+        // activar cuenta
+        await this.prisma.subscriptionInUser.update({
+            data: {
+                active: true,
+                dayStart: nextMonth.start.day,
+                monthStart: nextMonth.start.month,
+                yearStart: nextMonth.start.year,
+                dayEnd: nextMonth.end.day,
+                monthEnd: nextMonth.end.month,
+                yearEnd: nextMonth.end.year,
+            },
+            where: { id:customSubscription.id }
+        });
+        
+        // descontar a la cartera
+        await this.prisma.wallet.update({
+            data: {
+                mount: { decrement: 24.99 }
+            },
+            where: { id:customSubscription.userByReference.wallet.id }
+        });
+
+        return {
+            error: false,
+            message: this.lang.ACTIONS.SUCCESS.ACTIVE
+        }
+    }
+
+    @Put(`/subsctiption/disactive/:id`)
+    @UseGuards(AuthGuard)
+    private async disactiveSubscription(@Req() req: any, @Param() param: {id:string}) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        const customSubscription = await this.prisma.subscriptionInUser.findFirst({ where:{id:param.id}, include:{userByReference: {include:{wallet: true}}} });
+        if(!customSubscription) return { error:true, message: this.lang.ACTIONS.DANGER.UPDATE }
+
+        // activar cuenta
+        await this.prisma.subscriptionInUser.update({
+            data: {
+                active: false,
+            },
+            where: { id:customSubscription.id }
+        });
+    
+        return {
+            error: false,
+            message: this.lang.ACTIONS.SUCCESS.ACTIVE
+        }
+    }
+
+
+    @Get(`/subscription/expiration/all`)
+    @UseGuards(AuthGuard)
+    private async paginateSubscriptionExpirationAll(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string }) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        // validación de datos
+        const skip = query.skip ? Number(query.skip) : 0;
+        const take = query.take ? Number(query.take) : 10;
+        const customFilter: Prisma.UserWhereInput[] = [];
+
+        customFilter.push({ rolReference:{name:this.permit.USER_NUTRICIONISTA} });
+        // customFilter.push({ subscriptionDetail:{some:{}} });
+
+        // lógica
+        if (query.param) customFilter.push({ OR: [{ name: { contains: query.param } }, { lastname: { contains: query.param } }, { username: { contains: query.param } }] });
+
+        // validar eliminación
+        if (true) customFilter.push({ isDelete: false });
+        const filter: Prisma.UserWhereInput = { AND: customFilter };
+
+
+        const responsePromise = this.service.paginate({ skip, take, filter });
+
+        // LOG
+
+        const response = await responsePromise;
+
+        if (response.error) {
+            return {
+                message: response.message,
+                error: response.error
+            }
+        }
+
+        response.body.list.forEach(item => {
+            if(item.subscriptionReference)console.log(item)
+        })
+
+        return {
+            message: response.message,
+            error: response.error,
+            body: {
+                next: response.body.next,
+                previw: response.body.previw,
+                now: response.body.now,
+                list: response.body.list,
+                header: [`Nombre`,`Apellido`,`Rol`,`Saldo`,`Dia`,`Mes`,`Año`,`Dia Fin`,`Mes Fin`,`Año Fin`],
+                extrat: [`name`,`lastname`,`rolId`,`wallet.mount`,`subscriptionReference.dayStart`,`subscriptionReference.monthStart`,`subscriptionReference.yearStart`,`subscriptionReference.dayEnd`,`subscriptionReference.monthEnd`,`subscriptionReference.yearEnd`],
+                actionList: this.getActionsList(permit),
+                actionUnique: this.getActionsUnique(permit),
+            }
+        };
+    }
+
+    @Get(`/subscription/expiration/disactive`)
+    @UseGuards(AuthGuard)
+    private async paginateSubscriptionExpirationDisactive(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string }) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        // validación de datos
+        const skip = query.skip ? Number(query.skip) : 0;
+        const take = query.take ? Number(query.take) : 10;
+        const date = new Date();
+
+
+        // validar eliminación
+        // if (true) customFilter.push({ isDelete: false });
+
+        const countPromise = this.prisma.subscriptionInUser.count({
+            where: { active: false }
+        });
+
+        const responsePromise = this.prisma.subscriptionInUser.findMany({
+            skip,
+            take,
+            include: {
+                userByReference: {
+                    include: {
+                        wallet: true
+                    }
+                }
+            },
+            where: { active: false }
+        });
+        const response = await responsePromise;
+
+        const count = await countPromise;
+        const next = skip + take > count ? false : true;
+        const previw = skip < take ? false : true;
+
+        const test = skip + take;
+        const now = `${test < count ? test : count}/${count}`;
+
+        return {
+            message: this.lang.ACTIONS.SUCCESS.LIST,
+            error: false,
+            body: {
+                next,
+                previw,
+                now,
+                list: response,
+                header: [`Nombre`,`Apellido`,`Rol`,`Saldo`,`Active`,`Dia`,`Mes`,`Año`,`Dia Fin`,`Mes Fin`,`Año Fin`],
+                extrat: [`userByReference.name`,`userByReference.lastname`,`userByReference.rolId`,`userByReference.wallet.mount`,`active`,`dayStart`,`monthStart`,`yearStart`,`dayEnd`,`monthEnd`,`yearEnd`],
+                actionList: this.getActionsList(permit),
+                actionUnique: this.getActionsUnique(permit),
+            }
+        };
+    }
+
+    @Get(`/subscription/expiration/last`)
+    @UseGuards(AuthGuard)
+    private async paginateSubscriptionExpirationLast(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string }) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        // validación de datos
+        const skip = query.skip ? Number(query.skip) : 0;
+        const take = query.take ? Number(query.take) : 10;
+        const customFilter: Prisma.UserWhereInput[] = [];
+        const date = new Date();
+
+
+        // validar eliminación
+        // if (true) customFilter.push({ isDelete: false });
+
+        const countPromise = this.prisma.subscriptionInUser.count({
+            where: {
+                AND: [
+                    { dayEnd: {lte: date.getDate()}},
+                    { monthEnd: {lte: date.getMonth()+1}},
+                    { yearEnd: {lte: date.getFullYear()}},
+                    { active: true },
+                    { isDelete: false}
+                ],
+            } 
+        });
+
+        const responsePromise = this.prisma.subscriptionInUser.findMany({
+            skip,
+            take,
+            include: {
+                userByReference: {
+                    include: {
+                        wallet: true
+                    }
+                }
+            },
+            where: {
+                AND: [
+                    { dayEnd: {lte: date.getDate()}},
+                    { monthEnd: {lte: date.getMonth()+1}},
+                    { yearEnd: {lte: date.getFullYear()}},
+                    { active: true },
+                    { isDelete: false}
+                ]
+            }
+        });
+        const response = await responsePromise;
+
+        const count = await countPromise;
+        const next = skip + take > count ? false : true;
+        const previw = skip < take ? false : true;
+
+        const test = skip + take;
+        const now = `${test < count ? test : count}/${count}`;
+
+        return {
+            message: this.lang.ACTIONS.SUCCESS.LIST,
+            error: false,
+            body: {
+                next,
+                previw,
+                now,
+                list: response,
+                header: [`Nombre`,`Apellido`,`Rol`,`Saldo`,`Dia`,`Mes`,`Año`,`Dia Fin`,`Mes Fin`,`Año Fin`],
+                extrat: [`userByReference.name`,`userByReference.lastname`,`userByReference.rolId`,`userByReference.wallet.mount`,`dayStart`,`monthStart`,`yearStart`,`dayEnd`,`monthEnd`,`yearEnd`],
+                actionList: this.getActionsList(permit),
+                actionUnique: this.getActionsUnique(permit),
+            }
+        };
+    }
+
+    @Get(`/subscription/expiration/tomorrow`)
+    @UseGuards(AuthGuard)
+    private async paginateSubscriptionExpirationTomorrow(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string }) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        // validación de datos
+        const skip = query.skip ? Number(query.skip) : 0;
+        const take = query.take ? Number(query.take) : 10;
+        const customFilter: Prisma.UserWhereInput[] = [];
+
+        const date = new Date();
+        const tomorrow = new Date(date.getTime() + 86400000);
+
+        customFilter.push({
+            subscriptionDetail:{ 
+                some:{dayEnd: { lt: tomorrow.getDate() }}
+            }
+        });
+
+        // lógica
+        if (query.param) customFilter.push({ OR: [{ name: { contains: query.param } }, { lastname: { contains: query.param } }, { username: { contains: query.param } }] });
+
+        // validar eliminación
+        // if (true) customFilter.push({ isDelete: false });
+        const filter: Prisma.UserWhereInput = { AND: customFilter };
+
+        const countPromise = this.prisma.subscriptionInUser.count({
+            where: {
+                AND: [
+                    { dayEnd: tomorrow.getDate()},
+                    { monthEnd: tomorrow.getMonth()+1},
+                    { yearEnd:  tomorrow.getFullYear()},
+                    { active: true },
+                    { isDelete: false }
+                ]
+            } 
+        });
+
+        const responsePromise = this.prisma.subscriptionInUser.findMany({
+            skip,
+            take,
+            include: {
+                userByReference: {
+                    include: {
+                        wallet: true
+                    }
+                }
+            },
+            where: {
+                AND: [
+                    { dayEnd: tomorrow.getDate()},
+                    { monthEnd: tomorrow.getMonth()+1},
+                    { yearEnd:  tomorrow.getFullYear()},
+                    { active: true },
+                    { isDelete: false }
+                ]
+            }
+        });
+        const response = await responsePromise;
+
+        const count = await countPromise;
+        const next = skip + take > count ? false : true;
+        const previw = skip < take ? false : true;
+
+        const test = skip + take;
+        const now = `${test < count ? test : count}/${count}`;
+
+        return {
+            message: this.lang.ACTIONS.SUCCESS.LIST,
+            error: false,
+            body: {
+                next,
+                previw,
+                now,
+                list: response,
+                header: [`Nombre`,`Apellido`,`Rol`,`Saldo`,`Dia`,`Mes`,`Año`,`Dia Fin`,`Mes Fin`,`Año Fin`],
+                extrat: [`userByReference.name`,`userByReference.lastname`,`userByReference.rolId`,`userByReference.wallet.mount`,`dayStart`,`monthStart`,`yearStart`,`dayEnd`,`monthEnd`,`yearEnd`],
+                actionList: this.getActionsList(permit),
+                actionUnique: this.getActionsUnique(permit),
+            }
+        };
     }
 
     @Get(``)
@@ -135,13 +496,13 @@ export default class UserController {
         }
 
 
-        if (query.status === `APROVADO`) {
+        if (query.status === `APROBADO`) {
             const findWallet = await this.wallet.findUser({ id: response.userId });
             if (findWallet) {
-                await this.wallet.increment({ id: findWallet.id, mount: change !== null ? response.mount / change : response.mount });
+                await this.wallet.increment({ id: findWallet.id, mount: change !== null ? Number(response.mount) / change : Number(response.mount) });
             }
             else {
-                await this.wallet.create({ userId: response.userId, mount: change !== null ? response.mount / change : response.mount });
+                await this.wallet.create({ userId: response.userId, mount: change !== null ? Number(response.mount) / change : Number(response.mount) });
             }
         }
 

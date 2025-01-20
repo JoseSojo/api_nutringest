@@ -5,6 +5,7 @@ import AppEvent from "src/AppEvent";
 import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
+import { PrismaService } from "src/prisma/prisma.service";
 import HistoryService from "src/service/history.service";
 import ConfigSubscriptionService from "src/service/master/subsccription.service";
 
@@ -17,7 +18,8 @@ export default class SubscriptionController {
         private appEvents: AppEvent,
         private history: HistoryService,
         private permit: AppActions,
-        private languaje: LanguajeService 
+        private languaje: LanguajeService,
+        private prisma: PrismaService,
     ) {
         this.lang = this.languaje.GetTranslate()
     }

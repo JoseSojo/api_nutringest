@@ -37,6 +37,7 @@ export default class ExchangeListService {
             }
 
         } catch (error) {
+            console.log(error);
             return {
                 message: this.lang.ACTIONS.NOT_FOUND,
                 error: true

@@ -492,8 +492,8 @@ model ExchangeListFoods {
   exchangeListId              String
   exchangeListReference       ExchangeList               @relation(fields: [exchangeListId], references: [id])
 
-  foodId                      String
-  foodReference               PrimitiveFood       @relation(fields: [foodId], references: [id])
+  foodId                      Int
+  foodReference               FoodExchangeList       @relation(fields: [foodId], references: [id])
   
   isDelete                Boolean             @default(false)
   createAt                DateTime            @default(now())
@@ -749,12 +749,22 @@ model PrimitiveFood {
 
   // FOODS
   foodAll                 FoodAll[]
-  exchangeList            ExchangeListFoods[]
   menuDetail              MenuDetail[]
 
   isDelete                Boolean             @default(false)
   createAt                DateTime            @default(now())
   updateAt                DateTime            @updatedAt()      @default(now())
+}
+
+model FoodExchangeList {
+  id                      Int              @id             @default(autoincrement())
+  name                    String
+  category                String?
+  sub                     String?
+  unity                   String?
+  caloria                 Int?
+
+  exchanges               ExchangeListFoods[]
 }
 
 model UnityMeasure {

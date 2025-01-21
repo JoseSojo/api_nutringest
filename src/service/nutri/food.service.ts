@@ -4,6 +4,7 @@ import AppActions from "src/AppActions";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
 import PrimitiveFoodModel from "src/model/nutri/food.model";
+import { PrismaService } from "src/prisma/prisma.service";
 import { ActionsInterface } from "src/validation/types/ActionsInterface";
 import { ActionCrudInterface } from "src/validation/types/ActionSlideInterface";
 import { FORM } from "src/validation/types/FromInterface";
@@ -16,7 +17,8 @@ export default class PrimitiveFoodService {
         private permit: AppActions,
         private model: PrimitiveFoodModel,
 
-        private languaje: LanguajeService
+        private languaje: LanguajeService,
+        private prisma: PrismaService
     ) {
         this.lang = languaje.GetTranslate();
     }
@@ -132,6 +134,40 @@ export default class PrimitiveFoodService {
                 body: result
             }
 
+        } catch (error) {
+            return {
+                message: this.lang.ACTIONS.NOT_FOUND,
+                error: true
+            }
+        }
+    }
+
+    public async paginateExchange({ skip, take, filter }: { skip:number, take:number, filter:Prisma.FoodExchangeListWhereInput }) {
+        try {
+            
+            const resultPromise = this.prisma.foodExchangeList.findMany({ where:filter,skip,take });
+            const countPromise = this.prisma.foodExchangeList.count({ where:filter });
+
+            const result = await resultPromise;
+            const count = await countPromise;
+            const next    = skip+take > count ? false : true;
+            const previw = count <= take ? false : true;
+
+            const test = skip+take;
+            const now = `${test < count ? test : count}/${count}`;
+
+            return {
+                message: this.lang.ACTIONS.SUCCESS.LIST,
+                error: false,
+                body: {
+                    next,
+                    previw,
+                    now,
+                    list: result,
+                    header: [`Categoría`,`Sub categoría`,`Nombre`,`Unidad`,`Gramos`],
+                    extrat: [`category`,`sub`,`name`,`unity`,`caloria`],
+                }
+            }
         } catch (error) {
             return {
                 message: this.lang.ACTIONS.NOT_FOUND,

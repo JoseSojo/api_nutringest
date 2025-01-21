@@ -22,6 +22,52 @@ export default class PrimitiveFoodController {
         this.lang = this.languaje.GetTranslate()
     }
 
+    @Get(`exchange`)
+    @UseGuards(AuthGuard)
+    private async paginateFoodExchange(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string }) {
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        const action = this.getPermit().list;
+
+        // validación de permisos
+        const valid = permit.includes(action);
+        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+
+        // validación de datos
+        const skip = query.skip ? Number(query.skip) : 0;
+        const take = query.take ? Number(query.take) : 10;
+        const customFilter: Prisma.FoodExchangeListWhereInput[] = [];
+
+        // lógica
+        if (query.param) customFilter.push({ name: { contains: query.param } });
+        if (query.param) customFilter.push({ category:{contains:query.param} });
+        if (query.param) customFilter.push({ sub:{contains:query.param} });
+
+        // validar eliminación
+        const filter: Prisma.FoodExchangeListWhereInput = customFilter.length > 0 ? { OR: customFilter } : {};
+
+        const responsePromise = this.service.paginateExchange({ skip, take, filter });
+
+        // LOG
+
+        const response = await responsePromise;
+
+        if (response.error) {
+            return {
+                message: response.message,
+                error: response.error
+            }
+        }
+
+        return {
+            message: response.message,
+            error: response.error,
+            body: {
+                ...response.body,
+            }
+        };
+    }
+
     @Get(``)
     @UseGuards(AuthGuard)
     private async paginate(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string }) {

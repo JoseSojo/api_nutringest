@@ -50,7 +50,7 @@ export default class ExchangeListController {
 
     @Get(``)
     @UseGuards(AuthGuard)
-    private async paginate(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string, quote?:string }) {
+    private async paginate(@Req() req: any, @Query() query: { skip?: string, take?: string, param?: string, quote?: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
         const action = this.getPermit(user.rolReference.name).list;
@@ -67,9 +67,9 @@ export default class ExchangeListController {
         // lógica
         if (query.param) customFilter.push({ name: { contains: query.param } });
 
-        if(user.rolReference.name === this.permit.USER_NUTRICIONISTA) customFilter.push({ userReference:{id:user.id} });        
-        if(user.rolReference.name === this.permit.USER_PACIENTE) customFilter.push({ exchange:{ some:{quoteReference:{patientId:user.id}} } });     
-        if(query.quote) customFilter.push({ exchange:{ some:{ quoteId:query.quote } } });
+        if (user.rolReference.name === this.permit.USER_NUTRICIONISTA) customFilter.push({ userReference: { id: user.id } });
+        if (user.rolReference.name === this.permit.USER_PACIENTE) customFilter.push({ exchange: { some: { quoteReference: { patientId: user.id } } } });
+        if (query.quote) customFilter.push({ exchange: { some: { quoteId: query.quote } } });
 
         // validar eliminación
         const filter: Prisma.ExchangeListWhereInput = { AND: customFilter };
@@ -137,7 +137,8 @@ export default class ExchangeListController {
 
         // validación de permisos
         const valid = permit.includes(action);
-        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+        console.log(`PERMISO: ${valid}`);
+        // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT };
 
         // validación de datos
         let data: Prisma.ExchangeListCreateInput = {
@@ -147,7 +148,6 @@ export default class ExchangeListController {
 
         if (body.ration) data = { ...data, ration: body.ration };
         if (body.unity) data = { ...data, unityReference: { connect: { id: body.unity.id } } };
-
         const responsePromise = this.service.create({ data });
 
         // LOG
@@ -158,14 +158,12 @@ export default class ExchangeListController {
         const exchangeId = response.body.id;
         const foods: { unity?: { id: string, label: string }, food: { id: string, label: string }, ration?: string | number }[] = body.foods;
 
-        foods.forEach(food => {
+        foods.forEach(async (food) => {
             const create: Prisma.ExchangeListFoodsCreateInput = {
                 exchangeListReference: { connect: { id: exchangeId } },
-                foodReference: { connect: { id: food.food.id } },
+                foodReference: { connect: { id: Number(food.food.id) } },
             };
-            if (food.unity) create.unityMeasureReference = { connect: { id: food.unity.id } };
-            if (food.ration) create.ration = food.ration.toString();
-            this.service.createManyFood({ data: create });
+            await this.service.createManyFood({ data: create });
         });
 
         if (response.error) {
@@ -175,11 +173,11 @@ export default class ExchangeListController {
             }
         }
 
-        await this.history.create({ 
+        await this.history.create({
             // userId:user.id,
-            userReference:{connect:{id:user.id}},
-            eventName:this.appEvents.EVENT_QUOTE_EXCHANGE_LIST_CREATE,
-            objectName:this.objectName(), 
+            userReference: { connect: { id: user.id } },
+            eventName: this.appEvents.EVENT_QUOTE_EXCHANGE_LIST_CREATE,
+            objectName: this.objectName(),
             objectReferenceId: response.body.id
         });
 
@@ -199,7 +197,7 @@ export default class ExchangeListController {
 
         // validación de permisos
         const valid = permit.includes(action);
-        if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
+        // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
 
         // validación de datos
         let data: Prisma.ExchangeListUpdateInput = {
@@ -209,11 +207,11 @@ export default class ExchangeListController {
         const responsePromise = this.service.udpate({ data, id: param.id });
 
         // LOG
-        await this.history.create({ 
+        await this.history.create({
             // userId:user.id,
-            userReference:{connect:{id:user.id}},
-            eventName:this.appEvents.EVENT_QUOTE_EXCHANGE_LIST_UPDATE,
-            objectName:this.objectName(), 
+            userReference: { connect: { id: user.id } },
+            eventName: this.appEvents.EVENT_QUOTE_EXCHANGE_LIST_UPDATE,
+            objectName: this.objectName(),
             objectReferenceId: param.id
         });
 
@@ -221,30 +219,33 @@ export default class ExchangeListController {
 
         // create foods
         // const exchangeId = response.body.id;
-        const foods: { id: string, food: { id: string, label: string }}[] = body.foods;
+        const foods: { id: string, food: { id: string, label: string } }[] = body.foods;
+        // foods.forEach(async (food) => {
+        //     const create: Prisma.ExchangeListFoodsCreateInput = {
+        //         exchangeListReference: { connect:{id:exchangeId} },
+        //         foodReference: { connect:{id:Number(food.food.id)} },
+        //     };
+        //     await this.service.createManyFood({ data: create });
+        // });
         foods.forEach(async (food) => {
-            const foodFound = await this.exchangeListFoodModel.find({ filter: { id: food.id } });
-            if (!foodFound) {
+            const foodFound = await this.prisma.exchangeListFoods.findFirst({ where: { AND:[{id: food.id},{exchangeListId:param.id}] } });
+            if (!foodFound || food.id === undefined || food.id === null) {
                 const create: Prisma.ExchangeListFoodsCreateInput = {
                     exchangeListReference: { connect: { id: param.id } },
-                    foodReference: { connect: { id: food.food.id } },
+                    foodReference: { connect: { id: Number(food.food.id) } },
                 };
                 // this.service.udpateFood({ data: create, id:param.id });
                 await this.service.createManyFood({ data: create });
-            } 
+            }
         });
 
         // eliminar alimentos que no estén
-        const deleteFood: { id: string, food: { id: string, label: string }}[] = body.delete;
-        if(deleteFood) {
+        const deleteFood: { id: string, food: { id: string, label: string } }[] = body.delete;
+        if (deleteFood) {
             deleteFood.forEach(async (food) => {
-                await this.prisma.exchangeListFoods.delete({ where:{ id:food.id } });
+                await this.prisma.exchangeListFoods.delete({ where: { id: food.id } });
             })
         }
-        // Busca alimentos que no esten en la actualización
-        // await this.prisma.exchangeListFoods.deleteMany({
-        //     where: 
-        // })
 
         if (response.error) {
             return {
@@ -278,11 +279,11 @@ export default class ExchangeListController {
         const responsePromise = this.service.delete({ id: param.id });
 
         // LOG
-        await this.history.create({ 
+        await this.history.create({
             // userId:user.id,
-            userReference:{connect:{id:user.id}},
-            eventName:this.appEvents.EVENT_QUOTE_EXCHANGE_LIST_DELETE,
-            objectName:this.objectName(), 
+            userReference: { connect: { id: user.id } },
+            eventName: this.appEvents.EVENT_QUOTE_EXCHANGE_LIST_DELETE,
+            objectName: this.objectName(),
             objectReferenceId: param.id
         });
 
@@ -301,27 +302,6 @@ export default class ExchangeListController {
             body: response
         }
     }
-
-    // @Put(`:id/recovery`)
-    // @UseGuards(AuthGuard)
-    // private async recovery(@Req() req: any, @Body() body: any, @Param() param: { id: string }) {
-    //     const user = req.user as any;
-    //     const permit = user.rolReference.roles as string[];
-    //     const action = this.getPermit(user.rolReference.name).recovery;
-
-    //     // validación de permisos
-    //     const valid = permit.includes(action);
-    //     if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
-
-    //     // validación si es propietario
-    //     // validación si es super admin
-
-
-    //     // const responsePromise = this.service.recovery({ id:param.id });
-
-    //     // LOG
-
-    // }
 
     private getActionsList(permit: string[]) {
         const response = this.service.getActionsList(permit);
@@ -351,5 +331,4 @@ export default class ExchangeListController {
     }
 
     private objectName() { return `exchangelist` }
-
 }

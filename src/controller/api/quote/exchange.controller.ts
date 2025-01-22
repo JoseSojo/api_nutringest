@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from "
 import { Prisma } from "@prisma/client";
 import AppActions from "src/AppActions";
 import AppEvent from "src/AppEvent";
+import { ActiveGuard } from "src/guards/ActiveGuard";
 import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
@@ -100,6 +101,7 @@ export default class ExchangeListController {
 
     @Get(`:id/unique`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async unique(@Req() req: any, @Param() param: { id: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -130,6 +132,7 @@ export default class ExchangeListController {
 
     @Post(`create`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async create(@Req() req: any, @Body() body: any) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -190,6 +193,7 @@ export default class ExchangeListController {
 
     @Put(`:id/update`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async update(@Req() req: any, @Body() body: any, @Param() param: { id: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -263,6 +267,7 @@ export default class ExchangeListController {
 
     @Put(`:id/delete`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async delete(@Req() req: any, @Body() body: any, @Param() param: { id: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];

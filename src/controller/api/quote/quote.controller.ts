@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import { join } from "path";
 import AppActions from "src/AppActions";
 import AppEvent from "src/AppEvent";
+import { ActiveGuard } from "src/guards/ActiveGuard";
 import { AuthGuard } from "src/guards/AuthGuard";
 import { LanguajeInterface } from "src/languaje/guard/languaje.interface";
 import { LanguajeService } from "src/languaje/languaje.service";
@@ -30,6 +31,7 @@ export default class QuoteController {
     @UseInterceptors(FileInterceptor(`file`))
     @Post(`:id/upload/photo`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async uploadPhoto(@Req() req: any, @Param() param: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {        
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -77,6 +79,7 @@ export default class QuoteController {
 
     @Put(`exchange/remove`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async removeExchange(@Req() req: any, @Body() body: any, @Query() query:{ quote:string,item:string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -102,6 +105,7 @@ export default class QuoteController {
 
     @Put(`menu/remove`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async removeMenu(@Req() req: any, @Body() body: any, @Query() query:{ quote:string,item:string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -127,6 +131,7 @@ export default class QuoteController {
 
     @Put(`food/remove`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async removeFood(@Req() req: any, @Body() body: any, @Query() query:{ quote:string,item:string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -152,6 +157,7 @@ export default class QuoteController {
 
     @Post(`assing/exchange`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async connectExchange(@Req() req: any, @Body() body: any, @Query() query:{ quote:string,item:string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -177,6 +183,7 @@ export default class QuoteController {
 
     @Post(`assing/menu`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async connectMenu(@Req() req: any, @Body() body: any, @Query() query:{ quote:string,item:string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -202,6 +209,7 @@ export default class QuoteController {
 
     @Post(`assing/primitive`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async connectFood(@Req() req: any, @Body() body: any, @Query() query:{ quote:string,item:string,type:string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -376,6 +384,7 @@ export default class QuoteController {
 
     @Get(`photo`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async photo(@Req() req: any, @Query() query: { id:string, skip?: string, take?: string, param?: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -504,6 +513,7 @@ export default class QuoteController {
 
     @Put(`:id/update`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async update(@Req() req: any, @Body() body: any, @Param() param: { id: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];
@@ -553,6 +563,7 @@ export default class QuoteController {
 
     @Put(`:id/delete`)
     @UseGuards(AuthGuard)
+    @UseGuards(ActiveGuard)
     private async delete(@Req() req: any, @Body() body: any, @Param() param: { id: string }) {
         const user = req.user as any;
         const permit = user.rolReference.roles as string[];

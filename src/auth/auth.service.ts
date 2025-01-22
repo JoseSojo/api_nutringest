@@ -120,7 +120,7 @@ export default class AuthService {
             const sub = await this.prisma.subscription.findFirst({ where: {} })
             const dataSubscriptionDetail: Prisma.SubscriptionInUserCreateInput = {
                 active: true,
-                status: `FREE_TRIAL`,
+                status: `PRUEBA_GRATUITA`,
 
                 subscriptionReference: {
                     connect: { id: sub.id }
@@ -148,6 +148,7 @@ export default class AuthService {
             };
         } catch (error) {
             // log
+            console.log(error);
             // log error
             return {
                 message: this.lang.ACTIONS.DANGER.REGISTER,

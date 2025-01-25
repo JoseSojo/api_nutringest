@@ -28,6 +28,25 @@ export default class QuoteController {
         this.lang = this.languaje.GetTranslate()
     }
 
+    @Get(`report/:id`)
+    private async generateReport(@Req() req: any, @Param() param: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {        
+        const user = req.user as any;
+        const permit = user.rolReference.roles as string[];
+        // const action = this.getPermit(user.rolReference.name).udpate;
+
+        // validación de permisos
+        // const valid = permit.includes(action);
+        // if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT };
+
+        
+
+        return {
+            message: `Descargar Reporte`,
+            error: false,
+            body: {}
+        }
+    }
+
     @UseInterceptors(FileInterceptor(`file`))
     @Post(`:id/upload/photo`)
     @UseGuards(AuthGuard)
@@ -653,16 +672,9 @@ export default class QuoteController {
     }
 
     private getSections(rol: string) {
-        const sections = [
-            { label:`Alimentos`,value:`FOOD` },
-            { label:`Listas Intercambio`,value:`EXCHANGE` },
-            { label:`Menús`,value:`MENU` },
-            { label:`Agenda`,value:`CALENDAR` },
-            // { label:`Recomendaciones`,value:`UPDATE` },
-            // { label:`Historial`,value:`HISTORY` },
-            // { label:`Detalles`,value:`DETAILS` },
-            { label:`Fotos`,value:`PHOTO` },
-        ];
+
+        const sections = []
+
         if(rol === this.permit.USER_NUTRI_ADMIN) {
             sections.push({ label:`Historial`,value:`HISTORY` });
             sections.push({ label:`Paciente`,value:`PATIENT` });
@@ -670,6 +682,17 @@ export default class QuoteController {
         if(rol === this.permit.USER_NUTRICIONISTA) {
             sections.push({ label:`Paciente`,value:`PATIENT` });
         }
+        
+        sections.push({ label:`Agenda`,value:`CALENDAR` });
+        sections.push({ label:`Alimentos`,value:`FOOD` });
+        sections.push({ label:`Listas Intercambio`,value:`EXCHANGE` });
+        sections.push({ label:`Menús`,value:`MENU` });
+        // sections.push({ label:`Recomendaciones`,value:`UPDATE` });
+        // sections.push({ label:`Historial`,value:`HISTORY` });
+        // sections.push({ label:`Detalles`,value:`DETAILS` });
+        sections.push({ label:`Recomendaciones`,value:`RECOMENDATIONS` });
+        sections.push({ label:`Fotos`,value:`PHOTO` });
+        
 
 
         return sections;

@@ -117,6 +117,20 @@ model User {
 model Patient {
   id                String          @id           @default(uuid())
 
+  proteinasPercentaje       Int         @default(0)
+  proteinasGramos           Int         @default(0)
+  proteinasRacion           Int         @default(0)
+
+  lipidosPercentaje       Int           @default(0)
+  lipidosGramos           Int           @default(0)
+  lipidosRacion           Int           @default(0)
+
+  carbohidratosPercentaje       Int         @default(0)
+  carbohidratosGramos           Int         @default(0)
+  carbohidratosRacion           Int         @default(0)
+
+  historyWeight     HistoryWeightPatient[]
+
   userId            String          @unique
   userReference     User            @relation(fields: [userId], references: [id])
 
@@ -132,6 +146,19 @@ model Patient {
   diagnostico                         String
   sleep                               String?
   exercises                           String?
+}
+
+model HistoryWeightPatient {
+  id                  String              @id             @default(uuid())
+
+  patientId           String
+  patientReference    Patient             @relation(fields: [patientId], references: [id])
+
+  type                String
+
+  history             Json
+
+  updateAt            DateTime            @updatedAt()
 }
 
 // REFEWARS
@@ -543,6 +570,8 @@ model MenuDetail {
   foodPrimitiveReference    PrimitiveFood             @relation(fields: [foodPrimitiveId], references: [id])
 
   quentity                  Int?
+
+  unityDef                  String?                   @default("")
 
   unityMeasureId            String?
   unityMeasureReference     UnityMeasure?              @relation(fields: [unityMeasureId], references: [id])

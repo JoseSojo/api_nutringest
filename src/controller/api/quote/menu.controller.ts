@@ -77,12 +77,13 @@ export default class MenuController {
 
         // create foods
         const menuId = response.body.id;
-        const foods: { unity?: { id: string, label: string }, food: { id: string, label: string }, quantity?: string | number }[] = body.foods;
+        const foods: { unityDef?:string,unity?: { id: string, label: string }, food: { id: string, label: string }, quantity?: string | number }[] = body.foods;
 
         foods.forEach(async (food) => {
             const create: Prisma.MenuDetailCreateInput = {
                 foodPrimitiveReference: { connect: { id: food.food.id } },
                 menuReference: { connect: { id: menuId } },
+                unityDef: food.unityDef ? food.unityDef : ""
             };
             if(food.unity) create.unityMeasureReference = {connect:{id:food.unity.id}} 
             this.service.createManyFood({ data: create });
@@ -145,7 +146,7 @@ export default class MenuController {
 
         // create foods
         // const exchangeId = response.body.id;
-        const foods: { id: string, unity?: { id: string, label: string }, food: { id: string, label: string }, quantity: string | number }[] = body.foods;
+        const foods: { id: string, unityDef?:string, unity?: { id: string, label: string }, food: { id: string, label: string }, quantity: string | number }[] = body.foods;
 
         foods.forEach(async (food) => {
             const foodFound = await this.prisma.menuDetail.findFirst({ where: { AND:[{id: food.id},{menuId:response.body.id}] } });
@@ -154,9 +155,12 @@ export default class MenuController {
                     foodPrimitiveReference: { connect:{ id:food.food.id } },
                     menuReference: { connect:{ id:param.id } },
                     quentity: Number(food.quantity),
+                    unityDef: food.unityDef ? food.unityDef : ``
                 };
                 if(food.unity) create.unityMeasureReference = { connect:{ id:food.unity.id } }
                 await this.service.createManyFood({ data: create });
+            } else {
+                await this.prisma.menuDetail.update({ where:{id:food.id},data:{unityDef:food.unityDef} });
             }
         });
 

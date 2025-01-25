@@ -85,6 +85,7 @@ import ConfigSubscriptionDetailController from './controller/api/subscription.de
 import WalletService from './service/wallet.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import SubscriptionCron from './service/cron/SubscriptionCron';
+import PatientService from './service/patient.service';
 
 @Module({
   imports: [
@@ -193,6 +194,7 @@ import SubscriptionCron from './service/cron/SubscriptionCron';
     PaymentMethodService,
     ConfigSubscriptionService,
     ConfigSubscriptionHandlerService,
+    PatientService,
 
     PrimitiveFoodService,
     PresentationService,

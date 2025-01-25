@@ -8,11 +8,14 @@ CREATE TABLE `User` (
     `name2` VARCHAR(191) NULL,
     `lastname2` VARCHAR(191) NULL,
     `nacionality` VARCHAR(191) NULL,
+    `edoCivil` VARCHAR(191) NULL,
+    `ocupacion` VARCHAR(191) NULL,
+    `fn` DATETIME(3) NULL,
     `email2` VARCHAR(191) NULL,
     `phone` VARCHAR(191) NULL,
     `phone2` VARCHAR(191) NULL,
     `propietaryCode` VARCHAR(191) NOT NULL DEFAULT '',
-    `code` INTEGER NULL,
+    `code` VARCHAR(191) NULL,
     `age` INTEGER NULL,
     `genero` VARCHAR(191) NULL,
     `name` VARCHAR(191) NULL,
@@ -27,7 +30,157 @@ CREATE TABLE `User` (
     `rolId` VARCHAR(191) NULL,
     `languajeId` VARCHAR(191) NULL,
     `cityId` VARCHAR(191) NULL,
-    `subscriptionId` VARCHAR(191) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Patient` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `heredofamiliares` JSON NOT NULL,
+    `personalesPatologicos` JSON NOT NULL,
+    `personalesNPatologicos` JSON NOT NULL,
+    `ginecoObstretricos` JSON NOT NULL,
+    `trastornosGastroinstestinales` JSON NOT NULL,
+    `habitosAlimentacion` JSON NOT NULL,
+    `redordatorio24Horas` JSON NOT NULL,
+    `indicadorAntropometico` JSON NOT NULL,
+    `indicadoresBioquimicos` JSON NOT NULL,
+    `diagnostico` VARCHAR(191) NOT NULL,
+    `sleep` VARCHAR(191) NULL,
+    `exercises` VARCHAR(191) NULL,
+
+    UNIQUE INDEX `Patient_userId_key`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `HistoryWeightPatient` (
+    `id` VARCHAR(191) NOT NULL,
+    `patientId` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `history` JSON NOT NULL,
+    `updateAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Coupons` (
+    `id` VARCHAR(191) NOT NULL,
+    `mount` DECIMAL(65, 30) NOT NULL,
+    `propietaryId` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `use` BOOLEAN NOT NULL DEFAULT false,
+    `isDelete` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Subscription` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NULL,
+    `countMonth` INTEGER NOT NULL DEFAULT 1,
+    `defaultMount` DOUBLE NOT NULL DEFAULT 49.99,
+    `createById` VARCHAR(191) NULL,
+    `isDelete` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SubscriptionInUser` (
+    `id` VARCHAR(191) NOT NULL,
+    `active` BOOLEAN NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `dayStart` INTEGER NOT NULL,
+    `monthStart` INTEGER NOT NULL,
+    `yearStart` INTEGER NOT NULL,
+    `dayEnd` INTEGER NOT NULL,
+    `monthEnd` INTEGER NOT NULL,
+    `yearEnd` INTEGER NOT NULL,
+    `subscriptionId` VARCHAR(191) NOT NULL,
+    `userById` VARCHAR(191) NULL,
+    `isDelete` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TaskSeondPlanSubscription` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `task` VARCHAR(191) NOT NULL,
+    `completed` BOOLEAN NOT NULL DEFAULT false,
+    `extra` JSON NOT NULL,
+    `isDelete` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Wallet` (
+    `id` VARCHAR(191) NOT NULL,
+    `mount` DECIMAL(10, 2) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `Wallet_userId_key`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SubscriptionDetail` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `mount` DECIMAL(65, 30) NOT NULL,
+    `paymentMethodId` VARCHAR(191) NOT NULL,
+    `dayStart` INTEGER NOT NULL,
+    `monthStart` INTEGER NOT NULL,
+    `yearStart` INTEGER NOT NULL,
+    `dayEnd` INTEGER NOT NULL,
+    `monthEnd` INTEGER NOT NULL,
+    `yearEnd` INTEGER NOT NULL,
+    `subscriptionId` VARCHAR(191) NOT NULL,
+    `createById` VARCHAR(191) NULL,
+    `isDelete` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PaymetInUser` (
+    `id` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `paymenthId` VARCHAR(191) NOT NULL,
+    `isDelete` BOOLEAN NOT NULL DEFAULT false,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PaymentFinance` (
+    `id` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'EN ESPERA',
+    `date` VARCHAR(191) NULL,
+    `mount` DECIMAL(65, 30) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `paymentId` VARCHAR(191) NOT NULL,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -171,7 +324,7 @@ CREATE TABLE `ExchangeListFoods` (
     `ration` VARCHAR(191) NULL,
     `unityMeasureId` VARCHAR(191) NULL,
     `exchangeListId` VARCHAR(191) NOT NULL,
-    `foodId` VARCHAR(191) NOT NULL,
+    `foodId` INTEGER NOT NULL,
     `isDelete` BOOLEAN NOT NULL DEFAULT false,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -210,8 +363,9 @@ CREATE TABLE `MenuDetail` (
     `id` VARCHAR(191) NOT NULL,
     `menuId` VARCHAR(191) NOT NULL,
     `foodPrimitiveId` VARCHAR(191) NOT NULL,
-    `quentity` INTEGER NOT NULL,
-    `unityMeasureId` VARCHAR(191) NOT NULL,
+    `quentity` INTEGER NULL,
+    `unityDef` VARCHAR(191) NULL DEFAULT '',
+    `unityMeasureId` VARCHAR(191) NULL,
     `isDelete` BOOLEAN NOT NULL DEFAULT false,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -229,33 +383,6 @@ CREATE TABLE `Session` (
     `isDelte` BOOLEAN NOT NULL DEFAULT false,
     `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Subscription` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NULL,
-    `countMonth` INTEGER NOT NULL DEFAULT 1,
-    `defaultMount` DOUBLE NOT NULL DEFAULT 49.99,
-    `createById` VARCHAR(191) NULL,
-    `isDelete` BOOLEAN NOT NULL DEFAULT false,
-    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `SubscriptionDetail` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `subscriptionId` VARCHAR(191) NOT NULL,
-    `createById` VARCHAR(191) NULL,
-    `isDelete` BOOLEAN NOT NULL DEFAULT false,
-    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -292,6 +419,8 @@ CREATE TABLE `PaymentMethod` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
+    `dolar` BOOLEAN NOT NULL DEFAULT true,
+    `required` JSON NULL,
     `moneyId` VARCHAR(191) NOT NULL,
     `createById` VARCHAR(191) NOT NULL,
     `isDelete` BOOLEAN NOT NULL DEFAULT false,
@@ -405,6 +534,18 @@ CREATE TABLE `PrimitiveFood` (
     `updateAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `PrimitiveFood_code_key`(`code`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `FoodExchangeList` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `sub` VARCHAR(191) NULL,
+    `unity` VARCHAR(191) NULL,
+    `caloria` INTEGER NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -531,6 +672,21 @@ CREATE TABLE `StaticticsForYear` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Logs` (
+    `id` VARCHAR(191) NOT NULL,
+    `description` JSON NOT NULL,
+    `start` BOOLEAN NOT NULL,
+    `day` INTEGER NOT NULL,
+    `month` INTEGER NOT NULL,
+    `year` INTEGER NOT NULL,
+    `hour` INTEGER NOT NULL,
+    `minute` INTEGER NOT NULL,
+    `second` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `User` ADD CONSTRAINT `User_parentId_fkey` FOREIGN KEY (`parentId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -544,7 +700,49 @@ ALTER TABLE `User` ADD CONSTRAINT `User_languajeId_fkey` FOREIGN KEY (`languajeI
 ALTER TABLE `User` ADD CONSTRAINT `User_cityId_fkey` FOREIGN KEY (`cityId`) REFERENCES `ConfigCity`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_subscriptionId_fkey` FOREIGN KEY (`subscriptionId`) REFERENCES `Subscription`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Patient` ADD CONSTRAINT `Patient_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `HistoryWeightPatient` ADD CONSTRAINT `HistoryWeightPatient_patientId_fkey` FOREIGN KEY (`patientId`) REFERENCES `Patient`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Coupons` ADD CONSTRAINT `Coupons_propietaryId_fkey` FOREIGN KEY (`propietaryId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Subscription` ADD CONSTRAINT `Subscription_createById_fkey` FOREIGN KEY (`createById`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SubscriptionInUser` ADD CONSTRAINT `SubscriptionInUser_subscriptionId_fkey` FOREIGN KEY (`subscriptionId`) REFERENCES `Subscription`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SubscriptionInUser` ADD CONSTRAINT `SubscriptionInUser_userById_fkey` FOREIGN KEY (`userById`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TaskSeondPlanSubscription` ADD CONSTRAINT `TaskSeondPlanSubscription_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Wallet` ADD CONSTRAINT `Wallet_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SubscriptionDetail` ADD CONSTRAINT `SubscriptionDetail_paymentMethodId_fkey` FOREIGN KEY (`paymentMethodId`) REFERENCES `PaymentMethod`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SubscriptionDetail` ADD CONSTRAINT `SubscriptionDetail_subscriptionId_fkey` FOREIGN KEY (`subscriptionId`) REFERENCES `Subscription`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SubscriptionDetail` ADD CONSTRAINT `SubscriptionDetail_createById_fkey` FOREIGN KEY (`createById`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PaymetInUser` ADD CONSTRAINT `PaymetInUser_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PaymetInUser` ADD CONSTRAINT `PaymetInUser_paymenthId_fkey` FOREIGN KEY (`paymenthId`) REFERENCES `PaymentMethod`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PaymentFinance` ADD CONSTRAINT `PaymentFinance_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PaymentFinance` ADD CONSTRAINT `PaymentFinance_paymentId_fkey` FOREIGN KEY (`paymentId`) REFERENCES `PaymetInUser`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Calendar` ADD CONSTRAINT `Calendar_quoteId_fkey` FOREIGN KEY (`quoteId`) REFERENCES `Quote`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -595,7 +793,7 @@ ALTER TABLE `ExchangeListFoods` ADD CONSTRAINT `ExchangeListFoods_unityMeasureId
 ALTER TABLE `ExchangeListFoods` ADD CONSTRAINT `ExchangeListFoods_exchangeListId_fkey` FOREIGN KEY (`exchangeListId`) REFERENCES `ExchangeList`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ExchangeListFoods` ADD CONSTRAINT `ExchangeListFoods_foodId_fkey` FOREIGN KEY (`foodId`) REFERENCES `PrimitiveFood`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ExchangeListFoods` ADD CONSTRAINT `ExchangeListFoods_foodId_fkey` FOREIGN KEY (`foodId`) REFERENCES `FoodExchangeList`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `MenuInQuote` ADD CONSTRAINT `MenuInQuote_quoteId_fkey` FOREIGN KEY (`quoteId`) REFERENCES `Quote`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -613,19 +811,10 @@ ALTER TABLE `MenuDetail` ADD CONSTRAINT `MenuDetail_menuId_fkey` FOREIGN KEY (`m
 ALTER TABLE `MenuDetail` ADD CONSTRAINT `MenuDetail_foodPrimitiveId_fkey` FOREIGN KEY (`foodPrimitiveId`) REFERENCES `PrimitiveFood`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `MenuDetail` ADD CONSTRAINT `MenuDetail_unityMeasureId_fkey` FOREIGN KEY (`unityMeasureId`) REFERENCES `UnityMeasure`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `MenuDetail` ADD CONSTRAINT `MenuDetail_unityMeasureId_fkey` FOREIGN KEY (`unityMeasureId`) REFERENCES `UnityMeasure`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Session` ADD CONSTRAINT `Session_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Subscription` ADD CONSTRAINT `Subscription_createById_fkey` FOREIGN KEY (`createById`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SubscriptionDetail` ADD CONSTRAINT `SubscriptionDetail_subscriptionId_fkey` FOREIGN KEY (`subscriptionId`) REFERENCES `Subscription`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SubscriptionDetail` ADD CONSTRAINT `SubscriptionDetail_createById_fkey` FOREIGN KEY (`createById`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ConfigLanguaje` ADD CONSTRAINT `ConfigLanguaje_createById_fkey` FOREIGN KEY (`createById`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -679,4 +868,4 @@ ALTER TABLE `Presentation` ADD CONSTRAINT `Presentation_createById_fkey` FOREIGN
 ALTER TABLE `Supplement` ADD CONSTRAINT `Supplement_createById_fkey` FOREIGN KEY (`createById`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `History` ADD CONSTRAINT `History_id_fkey` FOREIGN KEY (`id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `History` ADD CONSTRAINT `History_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

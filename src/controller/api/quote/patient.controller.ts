@@ -8,6 +8,7 @@ import { LanguajeService } from "src/languaje/languaje.service";
 import UserModel from "src/model/user.model";
 import { PrismaService } from "src/prisma/prisma.service";
 import HistoryService from "src/service/history.service";
+import PatientService from "src/service/patient.service";
 import QuoteService from "src/service/quote/quote.service";
 import UserService from "src/service/user.service";
 
@@ -17,6 +18,7 @@ export default class PatientController {
     private lang: LanguajeInterface;
     constructor(
         private model: UserModel,
+        private patient: PatientService,
         private service: UserService,
         private permit: AppActions,
         private appEvents: AppEvent,
@@ -176,7 +178,25 @@ export default class PatientController {
             const indicadorAntropometico = body.indicadorAntropometico ? body.indicadorAntropometico : [] as any;
             const indicadoresBioquimicos = body.indicadoresBioquimicos ? body.indicadoresBioquimicos : [] as any;
 
+            type TESTTYPE = {kilo:number,gr:number,rc:number};
+
+            const proteinas: TESTTYPE = body.kilocalorias.proteinas ? body.kilocalorias.proteinas : {kilo:0,gr:0,rc:0}
+            const lipidos: TESTTYPE = body.kilocalorias.lipidos ? body.kilocalorias.lipidos : {kilo:0,gr:0,rc:0}
+            const carbohidratos: TESTTYPE = body.kilocalorias.carbohidratos ? body.kilocalorias.carbohidratos : {kilo:0,gr:0,rc:0}
+
             const patientData: Prisma.PatientCreateInput = {
+                carbohidratosGramos: Number(carbohidratos.gr),
+                carbohidratosPercentaje: Number(carbohidratos.kilo),
+                carbohidratosRacion: Number(carbohidratos.rc),
+
+                proteinasGramos: Number(proteinas.gr),
+                proteinasPercentaje: Number(proteinas.kilo),
+                proteinasRacion: Number(proteinas.rc),
+
+                lipidosGramos: Number(lipidos.gr),
+                lipidosPercentaje: Number(lipidos.kilo),
+                lipidosRacion: Number(lipidos.rc),
+
                 sleep: body.recomendaciones.sleep,
                 exercises: body.recomendaciones.exercies,
                 diagnostico: body.recomendaciones.diagnostico,
@@ -192,9 +212,11 @@ export default class PatientController {
                 userReference: { connect: { id: response.body.id } }
             }
 
-            await this.prisma.patient.create({ data: patientData });
+            // Se crea la data del paciente
+            const patientPromise = this.prisma.patient.create({ data: patientData });
 
-            await this.quote.create({
+            // Se crea la cita
+            const quotePromise = this.quote.create({
                 data: {
                     nutricionistReference: { connect: { id: user.id } },
                     patientReference: { connect: { id: response.body.id } },
@@ -204,6 +226,7 @@ export default class PatientController {
                 }
             })
 
+            // Se guarda en el historial
             await this.history.create({
                 // userId:user.id,
                 userReference: { connect: { id: user.id } },
@@ -211,6 +234,20 @@ export default class PatientController {
                 objectName: this.objectName(),
                 objectReferenceId: response.body.id
             });
+
+            const patient = await patientPromise;
+            await quotePromise;
+
+
+            // Se crea historial de Peso
+            const weightPromise = this.patient.registerHistoryWeight({ patientId: patient.id, type:"PESO",value:indicadorAntropometico[`Peso Actual`] })
+
+            // Se crea historial de Talla
+            const tallaPromise = this.patient.registerHistoryWeight({ patientId: patient.id, type:"TALLA",value:indicadorAntropometico[`Talla`] })
+            
+
+            await weightPromise;
+            await tallaPromise;
 
             return {
                 message: response.message,
@@ -270,6 +307,13 @@ export default class PatientController {
         // obtener id de paciente
         const find = await this.prisma.patient.findFirst({ where:{ userId:param.id } });
         if(find) {
+            type TESTTYPE = {kilo:number,gr:number,rc:number};
+
+            const proteinas: TESTTYPE = body.kilocalorias.proteinas ? body.kilocalorias.proteinas : {kilo:0,gr:0,rc:0}
+            const lipidos: TESTTYPE = body.kilocalorias.lipidos ? body.kilocalorias.lipidos : {kilo:0,gr:0,rc:0}
+            const carbohidratos: TESTTYPE = body.kilocalorias.carbohidratos ? body.kilocalorias.carbohidratos : {kilo:0,gr:0,rc:0}
+
+
             const heredofamiliares = body.heredofamiliares ? body.heredofamiliares : [] as any;
             const personalesPatologicos = body.personalesPatologicos ? body.personalesPatologicos : [] as any;
             const personalesNPatologicos = body.personalesNoPatologicos ? body.personalesNoPatologicos : [] as any;
@@ -281,6 +325,18 @@ export default class PatientController {
             const indicadoresBioquimicos = body.indicadoresBioquimicos ? body.indicadoresBioquimicos : [] as any;
 
             const patientData: Prisma.PatientCreateInput = {
+                carbohidratosGramos: Number(carbohidratos.gr),
+                carbohidratosPercentaje: Number(carbohidratos.kilo),
+                carbohidratosRacion: Number(carbohidratos.rc),
+
+                proteinasGramos: Number(proteinas.gr),
+                proteinasPercentaje: Number(proteinas.kilo),
+                proteinasRacion: Number(proteinas.rc),
+
+                lipidosGramos: Number(lipidos.gr),
+                lipidosPercentaje: Number(lipidos.kilo),
+                lipidosRacion: Number(lipidos.rc),
+
                 sleep: body.recomendaciones.sleep,
                 exercises: body.recomendaciones.exercies,
                 diagnostico: body.recomendaciones.diagnostico,
@@ -295,6 +351,15 @@ export default class PatientController {
                 trastornosGastroinstestinales: Object.entries(trastornosGastroinstestinales),
                 userReference: { connect: { id: response.body.id } }
             }
+
+            // Se crea historial de Peso
+            const weightPromise = this.patient.registerHistoryWeight({ patientId: find.id, type:"PESO",value:indicadorAntropometico[`Peso Actual`] })
+
+            // Se crea historial de Talla
+            const tallaPromise = this.patient.registerHistoryWeight({ patientId: find.id, type:"TALLA",value:indicadorAntropometico[`Talla`] })
+            
+            await weightPromise;
+            await tallaPromise;
 
             await this.prisma.patient.update({ data: patientData, where:{id:find.id} });
         }

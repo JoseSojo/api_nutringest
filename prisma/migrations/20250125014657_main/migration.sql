@@ -1,0 +1,10 @@
+-- AlterTable
+ALTER TABLE `Patient` ADD COLUMN `carbohidratosGramos` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `carbohidratosPercentaje` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `carbohidratosRacion` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `lipidosGramos` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `lipidosPercentaje` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `lipidosRacion` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `proteinasGramos` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `proteinasPercentaje` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `proteinasRacion` INTEGER NOT NULL DEFAULT 0;

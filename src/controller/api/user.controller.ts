@@ -800,7 +800,7 @@ export default class UserController {
 
         const dates = this.subscripitonDetail.GetDateFreeTrial();
 
-        const sub = await this.prisma.subscription.findFirst({ where: { name: `STONE` } })
+        const sub = await this.prisma.subscription.findFirst({  })
 
         const response = await responsePromise;
 

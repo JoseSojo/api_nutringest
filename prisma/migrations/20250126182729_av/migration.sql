@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `Patient` ADD COLUMN `carbohidratosKilo` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `lipidosKilo` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `proteinasKilo` INTEGER NOT NULL DEFAULT 0;

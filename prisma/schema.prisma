@@ -28,6 +28,7 @@ model User {
   edoCivil                String?
   ocupacion               String?
   fn                      DateTime?
+  address                 String?
 
   email2                   String?
   phone                    String?
@@ -117,14 +118,17 @@ model User {
 model Patient {
   id                String          @id           @default(uuid())
 
+  proteinasKilo             Int         @default(0)
   proteinasPercentaje       Int         @default(0)
   proteinasGramos           Int         @default(0)
   proteinasRacion           Int         @default(0)
 
+  lipidosKilo             Int           @default(0)
   lipidosPercentaje       Int           @default(0)
   lipidosGramos           Int           @default(0)
   lipidosRacion           Int           @default(0)
 
+  carbohidratosKilo             Int         @default(0)
   carbohidratosPercentaje       Int         @default(0)
   carbohidratosGramos           Int         @default(0)
   carbohidratosRacion           Int         @default(0)
@@ -134,15 +138,16 @@ model Patient {
   userId            String          @unique
   userReference     User            @relation(fields: [userId], references: [id])
 
-  heredofamiliares                    Json
-  personalesPatologicos               Json
-  personalesNPatologicos              Json
-  ginecoObstretricos                  Json
-  trastornosGastroinstestinales       Json
-  habitosAlimentacion                 Json
-  redordatorio24Horas                 Json
-  indicadorAntropometico              Json
-  indicadoresBioquimicos              Json
+  heredofamiliares                    Json?
+  personalesPatologicos               Json?
+  personalesNPatologicos              Json?
+  ginecoObstretricos                  Json?
+  trastornosGastroinstestinales       Json?
+  habitosAlimentacion                 Json?
+  redordatorio24Horas                 Json?
+  indicadorAntropometico              Json?
+  indicadoresBioquimicos              Json?
+  evaluacionBoiquimica                Json?
   diagnostico                         String
   sleep                               String?
   exercises                           String?

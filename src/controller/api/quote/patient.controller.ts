@@ -128,6 +128,7 @@ export default class PatientController {
             const valid = permit.includes(action);
             if (!valid) return { error: true, code: 401, message: this.lang.ACTIONS.NOT_PERMIT }
 
+            console.log(body.evaluacionBoiquimica);
             let code = user.propietaryCode;
 
             const data: Prisma.UserCreateInput = {
@@ -143,6 +144,7 @@ export default class PatientController {
                 ocupacion: body.ocupacion,
                 edoCivil: body.edoCivil,
                 fn: new Date(body.birtdate),
+                address: body.address ? body.address : ``,
 
                 propietaryCode: await codePromise,
                 parentReference: { connect: { id: user.id } },
@@ -158,6 +160,7 @@ export default class PatientController {
             const response = await responsePromise;
 
             if (response.error) {
+                console.log(response);
                 return {
                     message: response.message,
                     error: response.error
@@ -177,24 +180,28 @@ export default class PatientController {
             const redordatorio24Horas = body.redordatorio24Horas ? body.redordatorio24Horas : [] as any;
             const indicadorAntropometico = body.indicadorAntropometico ? body.indicadorAntropometico : [] as any;
             const indicadoresBioquimicos = body.indicadoresBioquimicos ? body.indicadoresBioquimicos : [] as any;
+            const evaluacionBoiquimica = body.evaluacionBoiquimica ? body.evaluacionBoiquimica : [] as any;
 
-            type TESTTYPE = {kilo:number,gr:number,rc:number};
+            type TESTTYPE = {kilo:number,gr:number,rc:number,porcentaje:number};
 
-            const proteinas: TESTTYPE = body.kilocalorias.proteinas ? body.kilocalorias.proteinas : {kilo:0,gr:0,rc:0}
-            const lipidos: TESTTYPE = body.kilocalorias.lipidos ? body.kilocalorias.lipidos : {kilo:0,gr:0,rc:0}
-            const carbohidratos: TESTTYPE = body.kilocalorias.carbohidratos ? body.kilocalorias.carbohidratos : {kilo:0,gr:0,rc:0}
+            const proteinas: TESTTYPE = body.kilocalorias.proteinas ? body.kilocalorias.proteinas : {porcentaje:0,kilo:0,gr:0,rc:0}
+            const lipidos: TESTTYPE = body.kilocalorias.lipidos ? body.kilocalorias.lipidos : {porcentaje:0,kilo:0,gr:0,rc:0}
+            const carbohidratos: TESTTYPE = body.kilocalorias.carbohidratos ? body.kilocalorias.carbohidratos : {porcentaje:0,kilo:0,gr:0,rc:0}
 
             const patientData: Prisma.PatientCreateInput = {
                 carbohidratosGramos: Number(carbohidratos.gr),
-                carbohidratosPercentaje: Number(carbohidratos.kilo),
+                carbohidratosPercentaje: Number(carbohidratos.porcentaje),                
+                carbohidratosKilo: Number(carbohidratos.kilo),
                 carbohidratosRacion: Number(carbohidratos.rc),
 
                 proteinasGramos: Number(proteinas.gr),
-                proteinasPercentaje: Number(proteinas.kilo),
+                proteinasPercentaje: Number(proteinas.porcentaje),                
+                proteinasKilo: Number(proteinas.kilo),
                 proteinasRacion: Number(proteinas.rc),
 
                 lipidosGramos: Number(lipidos.gr),
-                lipidosPercentaje: Number(lipidos.kilo),
+                lipidosPercentaje: Number(lipidos.porcentaje),                
+                lipidosKilo: Number(lipidos.kilo),
                 lipidosRacion: Number(lipidos.rc),
 
                 sleep: body.recomendaciones.sleep,
@@ -209,6 +216,7 @@ export default class PatientController {
                 personalesPatologicos: Object.entries(personalesPatologicos),
                 redordatorio24Horas: Object.entries(redordatorio24Horas),
                 trastornosGastroinstestinales: Object.entries(trastornosGastroinstestinales),
+                evaluacionBoiquimica: Object.entries(evaluacionBoiquimica),
                 userReference: { connect: { id: response.body.id } }
             }
 
@@ -255,6 +263,7 @@ export default class PatientController {
                 body: response
             }
         } catch (error) {
+            console.log(error);
             return {
                 message: `Error al crear paciente`,
                 error: true
@@ -307,7 +316,7 @@ export default class PatientController {
         // obtener id de paciente
         const find = await this.prisma.patient.findFirst({ where:{ userId:param.id } });
         if(find) {
-            type TESTTYPE = {kilo:number,gr:number,rc:number};
+            type TESTTYPE = {porcentaje:number,kilo:number,gr:number,rc:number};
 
             const proteinas: TESTTYPE = body.kilocalorias.proteinas ? body.kilocalorias.proteinas : {kilo:0,gr:0,rc:0}
             const lipidos: TESTTYPE = body.kilocalorias.lipidos ? body.kilocalorias.lipidos : {kilo:0,gr:0,rc:0}
@@ -323,18 +332,22 @@ export default class PatientController {
             const redordatorio24Horas = body.redordatorio24Horas ? body.redordatorio24Horas : [] as any;
             const indicadorAntropometico = body.indicadorAntropometico ? body.indicadorAntropometico : [] as any;
             const indicadoresBioquimicos = body.indicadoresBioquimicos ? body.indicadoresBioquimicos : [] as any;
+            const evaluacionBoiquimica = body.evaluacionBoiquimica ? body.evaluacionBoiquimica : [] as any;
 
             const patientData: Prisma.PatientCreateInput = {
                 carbohidratosGramos: Number(carbohidratos.gr),
-                carbohidratosPercentaje: Number(carbohidratos.kilo),
+                carbohidratosPercentaje: Number(carbohidratos.porcentaje),                
+                carbohidratosKilo: Number(carbohidratos.kilo),
                 carbohidratosRacion: Number(carbohidratos.rc),
 
                 proteinasGramos: Number(proteinas.gr),
-                proteinasPercentaje: Number(proteinas.kilo),
+                proteinasPercentaje: Number(proteinas.porcentaje),                
+                proteinasKilo: Number(proteinas.kilo),
                 proteinasRacion: Number(proteinas.rc),
 
                 lipidosGramos: Number(lipidos.gr),
-                lipidosPercentaje: Number(lipidos.kilo),
+                lipidosPercentaje: Number(lipidos.porcentaje),                
+                lipidosKilo: Number(lipidos.kilo),
                 lipidosRacion: Number(lipidos.rc),
 
                 sleep: body.recomendaciones.sleep,
@@ -349,7 +362,8 @@ export default class PatientController {
                 personalesPatologicos: Object.entries(personalesPatologicos),
                 redordatorio24Horas: Object.entries(redordatorio24Horas),
                 trastornosGastroinstestinales: Object.entries(trastornosGastroinstestinales),
-                userReference: { connect: { id: response.body.id } }
+                userReference: { connect: { id: response.body.id } },
+                evaluacionBoiquimica: evaluacionBoiquimica,
             }
 
             // Se crea historial de Peso
